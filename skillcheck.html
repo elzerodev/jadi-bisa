@@ -669,13 +669,13 @@ function renderResult(result, target){
     var topGapSkill = gaps[0].k;
     var deepLink = document.createElement('a');
     deepLink.className = 'btn';
-    deepLink.href = SCRIPT_URL + '?page=practice&skill=' + topGapSkill;
+    deepLink.href = 'practice.html&skill=' + topGapSkill;
     deepLink.innerHTML = '<span class="material-symbols-outlined pill-icon">play_arrow</span> Latihan ' + SKILLS[topGapSkill];
     ctaRow.appendChild(deepLink);
   }
   var hubLink = document.createElement('a');
   hubLink.className = gaps.length > 0 ? 'btn ghost' : 'btn';
-  hubLink.href = SCRIPT_URL + '?page=practice';
+  hubLink.href = 'practice.html';
   hubLink.innerHTML = '<span class="material-symbols-outlined pill-icon">menu_book</span> Buka Practice Hub';
   ctaRow.appendChild(hubLink);
 
