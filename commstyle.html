@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<base target="_top">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Communication Style — SkillCheck</title>
+<script>
+(function(){
+  try{
+    var THEME_KEY = 'ela_theme';
+    var saved = localStorage.getItem(THEME_KEY);
+    var theme = (saved === 'light' || saved === 'dark') ? saved :
+      ((window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme);
+  }catch(e){}
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+<!-- Export libs: html2canvas (PNG) + jsPDF (PDF) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --bg:#080b09; --panel-2:#161d19; --panel-3:#1c2420; --line:#26312b;
+  --text:#e9efe9; --text-dim:#8ba396; --text-dim-2:#5e7268;
+  --sky:#4dd0e1; --sky-dim:#1f8a95; --btn-text:#0a1006;
+  --amber:#f2b84b; --red:#e07a6b; --green:#7bc99a;
+  --mono:'JetBrains Mono', ui-monospace, monospace;
+  --sans:'Manrope', -apple-system, sans-serif;
+}
+:root[data-theme="light"]{
+  --bg:#f3f6f0; --panel-2:#eef2e9; --panel-3:#e1e8da; --line:#d6ddce;
+  --text:#141b15; --text-dim:#4c5b4f; --text-dim-2:#78887a;
+  --sky:#0f7a86; --sky-dim:#0b5c65; --btn-text:#ffffff;
+  --amber:#a9760f; --red:#b8382a; --green:#2f8f5b;
+}
+*{box-sizing:border-box;}
+.material-symbols-outlined{
+  font-family:'Material Symbols Outlined';
+  font-weight:normal; font-style:normal;
+  font-size:20px; line-height:1; display:inline-block;
+  vertical-align:middle; white-space:nowrap; word-wrap:normal;
+  direction:ltr; -webkit-font-feature-settings:'liga'; -webkit-font-smoothing:antialiased;
+  font-variation-settings:'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+}
+.material-symbols-outlined.filled{ font-variation-settings:'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 20; }
+.icon-sm{ font-size:16px; }
+.icon-lg{ font-size:26px; }
+html,body{margin:0;padding:0;}
+body{background:var(--bg); color:var(--text); font-family:var(--sans); min-height:100vh;}
+#app{max-width:760px; margin:0 auto; padding:22px 18px 48px; display:flex; flex-direction:column; min-height:100vh;}
+#topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:20px; padding-bottom:14px; border-bottom:1px solid var(--line); flex-wrap:wrap;}
+.brand{display:flex; align-items:center; gap:10px; font-family:var(--mono); font-weight:700; font-size:14px; color:var(--sky); text-decoration:none;}
+.brand .dot{width:9px; height:9px; border-radius:50%; background:var(--sky); box-shadow:0 0 10px var(--sky);}
+.navlinks{display:flex; gap:14px;}
+.navlinks a{font-family:var(--mono); font-size:12px; color:var(--text-dim); text-decoration:none;}
+.navlinks a:hover{color:var(--sky);}
+main{flex:1; display:flex; flex-direction:column;}
+.hidden{display:none !important;}
+
+.badge{display:inline-block; font-family:var(--mono); font-size:11px; color:var(--sky); border:1px solid rgba(77,208,225,.35); background:rgba(77,208,225,.08); padding:5px 12px; border-radius:20px; margin-bottom:16px;}
+h1{font-family:var(--mono); font-size:clamp(22px,5vw,28px); margin:0 0 12px; line-height:1.25;}
+h2{font-family:var(--mono); font-size:16px; margin:0 0 4px;}
+h3{font-family:var(--mono); font-size:14px; margin:0 0 6px;}
+p{color:var(--text-dim); font-size:14.5px; line-height:1.6; max-width:600px; margin:0 0 18px;}
+
+.card{background:var(--panel-2); border:1px solid var(--line); border-radius:14px; padding:20px; margin-bottom:16px;}
+
+label{display:block; font-family:var(--mono); font-size:11.5px; color:var(--text-dim); margin:0 0 6px; text-transform:uppercase; letter-spacing:.04em;}
+input[type=text]{
+  width:100%; background:var(--panel-3); border:1px solid var(--line); color:var(--text);
+  font-family:var(--sans); font-size:14.5px; padding:11px 12px; border-radius:8px; outline:none;
+}
+input[type=text]:focus{border-color:var(--sky);}
+
+.btn{
+  font-family:var(--mono); font-weight:700; font-size:14px;
+  background:var(--sky); color:var(--btn-text); border:none; padding:13px 22px; border-radius:8px;
+  text-decoration:none; display:inline-block; cursor:pointer;
+}
+.btn:disabled{opacity:.4; cursor:not-allowed;}
+.btn.ghost{background:transparent; color:var(--sky); border:1px solid var(--sky-dim);}
+.btn.small{padding:8px 14px; font-size:12.5px;}
+.btn-row{display:flex; gap:10px; margin-top:18px; flex-wrap:wrap;}
+
+.progress-track{height:6px; background:var(--panel-3); border-radius:6px; overflow:hidden; margin-bottom:18px;}
+.progress-fill{height:100%; background:var(--sky); border-radius:6px; transition:width .25s ease;}
+
+.qmeta{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;}
+.tag{font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; padding:3px 9px; border-radius:20px; border:1px solid var(--line); color:var(--text-dim);}
+.qtopic{font-family:var(--mono); font-size:12px; color:var(--sky); margin-bottom:6px;}
+.qtext{font-size:16px; line-height:1.55; margin-bottom:16px;}
+
+.option-btn{
+  display:block; width:100%; text-align:left; background:var(--panel-3); border:1px solid var(--line);
+  color:var(--text); font-family:var(--sans); font-size:14px; padding:12px 14px; border-radius:10px;
+  margin-bottom:10px; cursor:pointer;
+}
+.option-btn .opt-letter{font-family:var(--mono); color:var(--sky); margin-right:8px; font-weight:700;}
+.option-btn.selected{border-color:var(--sky); background:rgba(77,208,225,.08);}
+.option-btn:disabled{cursor:default;}
+
+.style-row{margin-bottom:14px;}
+.style-row-top{display:flex; justify-content:space-between; font-family:var(--mono); font-size:12.5px; margin-bottom:5px;}
+.style-row-top .lvl{color:var(--text-dim-2);}
+.bar-track{height:10px; background:var(--panel-3); border-radius:6px; overflow:hidden;}
+.bar-fill{height:100%; border-radius:6px;}
+
+.overall-box{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:4px;}
+.style-chip{display:flex; align-items:center; gap:8px; padding:10px 16px; border-radius:12px; border:1px solid var(--line); background:var(--panel-3);}
+.style-chip .chip-icon{width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex:none;}
+.style-chip .chip-text .chip-label{font-family:var(--mono); font-size:10.5px; color:var(--text-dim-2); text-transform:uppercase; letter-spacing:.04em;}
+.style-chip .chip-text .chip-name{font-weight:700; font-size:15px;}
+
+table.score-table{width:100%; border-collapse:collapse; font-size:13.5px;}
+table.score-table th, table.score-table td{text-align:left; padding:8px 6px; border-bottom:1px solid var(--line);}
+table.score-table th{font-family:var(--mono); font-size:11px; color:var(--text-dim-2); text-transform:uppercase; letter-spacing:.03em;}
+table.score-table td.num{font-family:var(--mono);}
+
+.section-title{font-family:var(--mono); font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.06em; margin:22px 0 10px;}
+ul.plain{margin:0; padding-left:18px; font-size:13.5px; color:var(--text-dim); line-height:1.7;}
+
+.howto-item{display:flex; gap:12px; padding:14px 0; border-bottom:1px solid var(--line);}
+.howto-item:last-child{border-bottom:none;}
+.howto-item .howto-icon{width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex:none;}
+.howto-item .howto-body h3{margin-bottom:4px;}
+.howto-item .howto-body p{margin:0; font-size:13.5px;}
+
+.note{font-family:var(--mono); font-size:11.5px; color:var(--text-dim-2); margin-top:4px;}
+.site-footer{margin-top:30px; padding:18px 0 26px; border-top:1px solid var(--line); text-align:center; font-family:var(--mono); font-size:11.5px; color:var(--text-dim-2);}
+
+.export-status{font-family:var(--mono); font-size:11.5px; color:var(--sky); margin-top:8px; min-height:14px;}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> COMM STYLE</a>
+    <div class="navlinks">
+      <a href="index.html"><span class="material-symbols-outlined icon-sm" style="vertical-align:-3px;">arrow_back</span> Hub</a>
+      <a href="skillcheck.html">SkillCheck</a>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- ===================== SCREEN 1: ONBOARDING ===================== -->
+    <section id="screen-onboarding">
+      <span class="badge">ASSESSMENT · COMMUNICATION STYLE</span>
+      <h1>Kenali gaya komunikasimu.</h1>
+      <p>Jawab 24 pertanyaan situasional untuk mengetahui kecenderungan gaya komunikasimu di antara empat gaya: Direct, Expressive, Supportive, dan Analytical. Tidak ada jawaban benar atau salah, pilih yang paling menggambarkan dirimu.</p>
+
+      <div class="card">
+        <label>Nama</label>
+        <input type="text" id="inpName" placeholder="Nama kamu">
+        <div class="btn-row">
+          <button class="btn" id="btnStart"><span class="material-symbols-outlined icon-sm" style="vertical-align:-3px;">play_arrow</span> Mulai Assessment</button>
+        </div>
+        <div class="note">Hasil menunjukkan kecenderungan gaya komunikasi dalam assessment ini, bukan penilaian baik atau buruk maupun diagnosis kepribadian.</div>
+        <div class="note">Jawabanmu disimpan otomatis di browser ini (local storage) sehingga bisa dilanjutkan jika halaman ditutup, dan bisa dihapus kapan saja lewat tombol reset.</div>
+      </div>
+    </section>
+
+    <!-- ===================== SCREEN 2: QUIZ ===================== -->
+    <section id="screen-quiz" class="hidden">
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="card">
+        <div class="qmeta">
+          <span class="tag" id="qCounter">Pertanyaan 1/24</span>
+        </div>
+        <div class="qtopic" id="qTopic"></div>
+        <div class="qtext" id="qText"></div>
+        <div id="qOptions"></div>
+        <div class="btn-row">
+          <button class="btn ghost small" id="btnBack">‹ Sebelumnya</button>
+          <button class="btn ghost small" id="btnResetQuiz"><span class="material-symbols-outlined icon-sm" style="vertical-align:-3px;">restart_alt</span> Reset ke Awal</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SCREEN 3: RESULT ===================== -->
+    <section id="screen-result" class="hidden">
+      <span class="badge">HASIL ASSESSMENT</span>
+      <h1>Gaya Komunikasimu</h1>
+
+      <div class="card" id="resultCapture">
+        <div class="overall-box" id="styleChips"></div>
+        <div class="note" id="resultName"></div>
+
+        <div class="section-title">Skor per Gaya</div>
+        <div id="scoreChartBox"></div>
+
+        <div class="section-title">Tabel Skor</div>
+        <table class="score-table" id="scoreTable"></table>
+
+        <div class="section-title">Kekuatan Gaya Utamamu</div>
+        <ul class="plain" id="strengthList"></ul>
+
+        <div class="section-title">Potensi Tantangan</div>
+        <ul class="plain" id="challengeList"></ul>
+
+        <div class="section-title">Tips Komunikasi untuk Kamu</div>
+        <ul class="plain" id="tipsList"></ul>
+
+        <div class="section-title">Cara Berkomunikasi dengan Tiap Gaya</div>
+        <div id="howtoBox"></div>
+      </div>
+
+      <div class="card">
+        <label style="margin-bottom:10px;">Simpan Hasil</label>
+        <div class="btn-row" id="exportBtnRow">
+          <button class="btn" id="btnExportImage"><span class="material-symbols-outlined icon-sm" style="vertical-align:-3px;">image</span> Export sebagai Gambar</button>
+          <button class="btn ghost" id="btnExportPdf"><span class="material-symbols-outlined icon-sm" style="vertical-align:-3px;">picture_as_pdf</span> Export sebagai PDF</button>
+        </div>
+        <div class="export-status" id="exportStatus"></div>
+      </div>
+
+      <div class="card">
+        <div class="btn-row">
+          <button class="btn ghost" id="btnRetake"><span class="material-symbols-outlined icon-sm" style="vertical-align:-3px;">refresh</span> Assessment Ulang</button>
+          <button class="btn ghost" id="btnFullReset"><span class="material-symbols-outlined icon-sm" style="vertical-align:-3px;">delete</span> Hapus Data & Mulai dari Awal</button>
+          <a class="btn ghost" href="=skillcheck.html"><span class="material-symbols-outlined icon-sm" style="vertical-align:-3px;">quiz</span> Coba SkillCheck</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer"><span style="color:var(--sky)">&lt;/&gt;</span> 2026 dikiLabs</footer>
+</div>
+
+<script>
+/* =========================================================================
+   COMMUNICATION STYLE ASSESSMENT — semua data (bank soal, kunci warna,
+   interpretasi, profil kekuatan/tantangan, tips) di-hardcode di sini (JS),
+   TIDAK memakai Google Sheet / DB. Backend (Code.gs) hanya dipakai untuk
+   serve halaman & (opsional) mencatat ringkasan hasil ke Google Sheet
+   lewat saveCommStyleResult().
+
+   Struktur tiap soal: { id, topic, prompt, options:[{text, color}, x4] }
+   Kunci warna TIDAK pernah ditampilkan ke pengguna, hanya dipakai untuk
+   scoring di sisi client.
+   ========================================================================= */
+
+var COLOR_META = {
+  RED:    { label:'Direct / Dominant',      icon:'speed',      var:'--red' },
+  YELLOW: { label:'Expressive / Social',    icon:'campaign',   var:'--amber' },
+  GREEN:  { label:'Supportive / Steady',    icon:'handshake',  var:'--green' },
+  BLUE:   { label:'Analytical / Structured', icon:'insights',  var:'--sky' }
+};
+
+var COLOR_ORDER = ['RED','YELLOW','GREEN','BLUE'];
+
+var STRENGTHS = {
+  RED:    ['Tegas dan berani mengambil keputusan.', 'Fokus pada hasil dan pencapaian target.', 'Cepat bergerak begitu arah sudah jelas.', 'Menyukai kejelasan dan efisiensi.'],
+  YELLOW: ['Spontan dan mudah beradaptasi dengan situasi baru.', 'Ramah dan cepat membangun relasi dengan orang lain.', 'Antusias serta mampu menularkan semangat ke tim.', 'Fleksibel menghadapi perubahan rencana.'],
+  GREEN:  ['Sabar dan tenang dalam menghadapi tekanan.', 'Empatik serta pendengar yang baik bagi orang lain.', 'Dapat diandalkan dan konsisten dalam bekerja.', 'Kooperatif dan mengutamakan kenyamanan tim.'],
+  BLUE:   ['Terstruktur dan teliti dalam bekerja.', 'Berpikir logis serta berorientasi pada data dan fakta.', 'Penuh perencanaan sebelum bertindak.', 'Cermat memperhatikan detail penting.']
+};
+
+var CHALLENGES = {
+  RED:    ['Dapat terlihat terlalu direct bagi sebagian orang.', 'Bisa terkesan terburu-buru dalam mengambil keputusan.', 'Kadang kurang memberi ruang bagi pendapat orang lain.'],
+  YELLOW: ['Dapat mudah terdistraksi dari fokus utama.', 'Bisa berubah arah mengikuti suasana sekitar.', 'Kadang kurang menyukai detail yang terlalu panjang.'],
+  GREEN:  ['Bisa terlalu lama mempertimbangkan sebuah keputusan.', 'Kadang menghindari konflik meski perlu disuarakan.', 'Dapat terlalu memprioritaskan kenyamanan orang lain.'],
+  BLUE:   ['Bisa terlalu banyak menganalisis sebelum bertindak.', 'Dapat membutuhkan waktu lebih lama sebelum memutuskan.', 'Kadang terlalu fokus pada detail kecil.']
+};
+
+var SELF_TIPS = {
+  RED:    ['Beri ruang bagi orang lain menyampaikan pendapat sebelum kamu mengambil keputusan.', 'Sampaikan alasan di balik keputusanmu agar tim memahami konteksnya.', 'Latih kesabaran saat berdiskusi dengan orang yang butuh waktu lebih lama untuk memproses informasi.'],
+  YELLOW: ['Buat catatan agar ide-ide penting tidak hilang di tengah percakapan.', 'Sisihkan waktu untuk memeriksa detail sebelum benar-benar dieksekusi.', 'Beri kesempatan orang lain menyelesaikan pendapatnya sebelum kamu menimpali.'],
+  GREEN:  ['Latih menyampaikan pendapat secara lebih proaktif meski berisiko berbeda pandangan.', 'Tetapkan batas waktu untuk pengambilan keputusan agar tidak berlarut-larut.', 'Sampaikan kebutuhanmu secara terbuka, bukan hanya memprioritaskan orang lain.'],
+  BLUE:   ['Tetapkan batas waktu analisis agar keputusan tetap diambil sesuai tenggat.', 'Sederhanakan penjelasanmu saat berbicara dengan audiens non teknis.', 'Sesekali percaya pada insting tanpa menunggu data yang benar-benar lengkap.']
+};
+
+var HOWTO_OTHERS = {
+  RED:    'Langsung ke inti pembicaraan, fokus pada hasil dan solusi. Sampaikan opsi yang jelas agar mereka bisa memutuskan dengan cepat, dan hindari basa-basi yang terlalu panjang.',
+  YELLOW: 'Beri ruang untuk berbicara dan bertukar ide, gunakan nada yang hangat dan antusias. Hindari membanjiri mereka dengan detail teknis di awal percakapan, dan apresiasi ide kreatif mereka.',
+  GREEN:  'Beri waktu untuk berpikir dan sampaikan dengan nada tenang serta personal. Hindari tekanan mendadak, dan tunjukkan bahwa pendapat mereka benar-benar didengar.',
+  BLUE:   'Siapkan data dan fakta pendukung sebelum berdiskusi, serta beri waktu yang cukup untuk mereka menganalisis. Sampaikan secara terstruktur dan hindari memaksa keputusan tanpa informasi lengkap.'
+};
+
+var QUESTIONS = [
+  { id:'c1', topic:'Ketika Mendapat Tugas Baru',
+    prompt:'Kamu mendapatkan tugas baru dengan deadline yang cukup dekat. Apa yang paling mungkin kamu lakukan?',
+    options:[
+      {text:'Langsung menentukan langkah pertama dan mulai mengerjakannya.', color:'RED'},
+      {text:'Memahami dulu detail, informasi, dan ekspektasi tugas tersebut.', color:'BLUE'},
+      {text:'Mengajak berdiskusi dengan orang lain sambil membicarakan ide awal.', color:'YELLOW'},
+      {text:'Memastikan siapa saja yang terlibat dan bagaimana pekerjaan ini bisa berjalan baik bersama tim.', color:'GREEN'}
+    ]},
+  { id:'c2', topic:'Ketika Pendapat Berbeda',
+    prompt:'Dalam sebuah diskusi, pendapatmu berbeda dengan mayoritas orang. Kamu cenderung...',
+    options:[
+      {text:'Menyampaikan pendapat secara langsung dan menjelaskan mengapa kamu tidak setuju.', color:'RED'},
+      {text:'Mendengarkan pendapat mereka terlebih dahulu agar suasana tetap nyaman.', color:'GREEN'},
+      {text:'Mencari data atau fakta yang dapat membantu membandingkan kedua pendapat.', color:'BLUE'},
+      {text:'Menyampaikan pandanganmu dengan cara yang ringan agar diskusi tetap menyenangkan.', color:'YELLOW'}
+    ]},
+  { id:'c3', topic:'Rencana Berubah Mendadak',
+    prompt:'Rencana yang sudah dibuat tiba-tiba berubah. Respons pertamamu biasanya...',
+    options:[
+      {text:'Mencoba melihat kemungkinan baru dan menjadikannya sesuatu yang menarik.', color:'YELLOW'},
+      {text:'Segera menentukan keputusan baru agar pekerjaan tetap berjalan.', color:'RED'},
+      {text:'Memastikan terlebih dahulu alasan perubahan dan dampaknya terhadap rencana.', color:'BLUE'},
+      {text:'Menyesuaikan diri dan memastikan orang-orang yang terlibat tetap merasa nyaman.', color:'GREEN'}
+    ]},
+  { id:'c4', topic:'Teman Meminta Bantuan',
+    prompt:'Seorang teman datang kepadamu karena sedang mengalami masalah. Apa yang paling mungkin kamu lakukan?',
+    options:[
+      {text:'Membantu mencari solusi yang paling praktis dan bisa segera dilakukan.', color:'RED'},
+      {text:'Mengajak berbicara agar dia bisa menceritakan masalahnya dengan lebih nyaman.', color:'GREEN'},
+      {text:'Mengajukan beberapa pertanyaan untuk memahami masalahnya secara detail.', color:'BLUE'},
+      {text:'Memberikan semangat dan mencoba membuat suasana menjadi lebih positif.', color:'YELLOW'}
+    ]},
+  { id:'c5', topic:'Meeting Terlalu Lama',
+    prompt:'Saat meeting mulai terlalu lama dan pembicaraan berputar-putar, kamu cenderung...',
+    options:[
+      {text:'Mengusulkan agar pembicaraan kembali ke agenda dan keputusan yang harus dibuat.', color:'RED'},
+      {text:'Mencoba membuat suasana lebih santai agar peserta tidak terlalu tegang.', color:'YELLOW'},
+      {text:'Memastikan semua orang yang ingin berbicara mendapatkan kesempatan.', color:'GREEN'},
+      {text:'Mengusulkan agar informasi yang dibutuhkan dirangkum dulu sebelum keputusan dibuat.', color:'BLUE'}
+    ]},
+  { id:'c6', topic:'Membeli Sesuatu yang Mahal',
+    prompt:'Ketika ingin membeli sesuatu yang cukup mahal, kamu biasanya...',
+    options:[
+      {text:'Membandingkan spesifikasi, harga, review, dan informasi lainnya terlebih dahulu.', color:'BLUE'},
+      {text:'Berdiskusi dengan orang lain dan melihat pengalaman mereka.', color:'YELLOW'},
+      {text:'Mempertimbangkan apakah keputusan itu memberi manfaat yang benar-benar dibutuhkan.', color:'GREEN'},
+      {text:'Jika sudah merasa cocok, kamu tidak suka terlalu lama menunda keputusan.', color:'RED'}
+    ]},
+  { id:'c7', topic:'Rekan Kerja Melakukan Kesalahan',
+    prompt:'Seorang rekan melakukan kesalahan yang berdampak pada pekerjaanmu. Kamu cenderung...',
+    options:[
+      {text:'Membicarakannya secara langsung dan mencari tindakan perbaikan.', color:'RED'},
+      {text:'Mencoba memahami situasinya terlebih dahulu sebelum memberikan respons.', color:'GREEN'},
+      {text:'Mengajak membahas bagaimana kesalahan itu terjadi dan cara mencegahnya terulang.', color:'BLUE'},
+      {text:'Mencairkan suasana terlebih dahulu agar pembicaraan tidak terlalu tegang.', color:'YELLOW'}
+    ]},
+  { id:'c8', topic:'Mendapat Ide Baru',
+    prompt:'Tiba-tiba kamu mendapatkan ide yang menurutmu menarik. Apa yang biasanya terjadi?',
+    options:[
+      {text:'Langsung menceritakannya kepada orang lain.', color:'YELLOW'},
+      {text:'Mencatatnya lalu memikirkan bagaimana ide itu bisa dikembangkan secara sistematis.', color:'BLUE'},
+      {text:'Memikirkan apakah ide itu benar-benar bermanfaat bagi orang yang akan menggunakannya.', color:'GREEN'},
+      {text:'Segera mencoba membuat langkah awal untuk melihat apakah ide itu bisa diwujudkan.', color:'RED'}
+    ]},
+  { id:'c9', topic:'Mendapat Kritik',
+    prompt:'Ketika seseorang memberikan kritik terhadap pekerjaanmu, kamu biasanya...',
+    options:[
+      {text:'Menanyakan contoh atau fakta spesifik agar tahu bagian mana yang perlu diperbaiki.', color:'BLUE'},
+      {text:'Mendengarkan terlebih dahulu dan mempertimbangkan perasaan orang tersebut.', color:'GREEN'},
+      {text:'Memikirkan apakah kritik itu bisa digunakan untuk meningkatkan hasil pekerjaan.', color:'RED'},
+      {text:'Mencoba melihat sisi positifnya dan tidak terlalu memikirkannya secara personal.', color:'YELLOW'}
+    ]},
+  { id:'c10', topic:'Bekerja dalam Tim',
+    prompt:'Dalam sebuah tim, kamu biasanya lebih nyaman ketika...',
+    options:[
+      {text:'Semua orang mengetahui perannya dan bekerja dengan ritme yang jelas.', color:'BLUE'},
+      {text:'Ada interaksi, diskusi, dan suasana yang menyenangkan.', color:'YELLOW'},
+      {text:'Setiap orang saling mendukung dan tidak segan membantu ketika ada masalah.', color:'GREEN'},
+      {text:'Target dan hasil akhirnya jelas sehingga semua orang tahu apa yang harus dicapai.', color:'RED'}
+    ]},
+  { id:'c11', topic:'Harus Mengambil Keputusan Cepat',
+    prompt:'Kamu diminta mengambil keputusan dalam waktu singkat. Kamu cenderung...',
+    options:[
+      {text:'Menggunakan informasi yang tersedia dan memilih keputusan yang paling masuk akal.', color:'BLUE'},
+      {text:'Memilih opsi yang menurutmu paling efektif lalu segera menjalankannya.', color:'RED'},
+      {text:'Mempertimbangkan dampaknya terhadap orang-orang yang terlibat.', color:'GREEN'},
+      {text:'Mengikuti intuisi dan melihat kemungkinan yang paling menarik.', color:'YELLOW'}
+    ]},
+  { id:'c12', topic:'Acara Bersama Teman',
+    prompt:'Saat merencanakan acara bersama teman, kamu lebih mungkin...',
+    options:[
+      {text:'Membuat rencana detail agar semuanya berjalan sesuai jadwal.', color:'BLUE'},
+      {text:'Memastikan semua orang merasa dilibatkan dan nyaman.', color:'GREEN'},
+      {text:'Membuat suasana acara semenarik mungkin.', color:'YELLOW'},
+      {text:'Menentukan keputusan utama dengan cepat agar persiapan segera berjalan.', color:'RED'}
+    ]},
+  { id:'c13', topic:'Informasi Belum Lengkap',
+    prompt:'Kamu harus menyelesaikan pekerjaan, tetapi informasi yang diberikan belum lengkap. Kamu cenderung...',
+    options:[
+      {text:'Bertanya kepada pihak yang terkait sebelum melanjutkan pekerjaan.', color:'GREEN'},
+      {text:'Menggunakan informasi yang ada dan mulai bergerak sambil menyesuaikan kemudian.', color:'RED'},
+      {text:'Mencari sumber informasi tambahan agar keputusan yang dibuat lebih akurat.', color:'BLUE'},
+      {text:'Mengajak orang lain berdiskusi untuk mendapatkan perspektif tambahan.', color:'YELLOW'}
+    ]},
+  { id:'c14', topic:'Bertemu Orang Baru',
+    prompt:'Saat berada di lingkungan yang banyak orang baru, kamu biasanya...',
+    options:[
+      {text:'Lebih banyak mengamati terlebih dahulu sebelum ikut terlibat.', color:'BLUE'},
+      {text:'Mudah membuka percakapan dan memperkenalkan diri.', color:'YELLOW'},
+      {text:'Mencari orang yang terlihat membutuhkan teman atau merasa kurang nyaman.', color:'GREEN'},
+      {text:'Tidak masalah berbicara langsung dan menyampaikan apa yang ingin dibicarakan.', color:'RED'}
+    ]},
+  { id:'c15', topic:'Deadline Semakin Dekat',
+    prompt:'Deadline pekerjaan tinggal sedikit, tetapi pekerjaan belum selesai. Kamu cenderung...',
+    options:[
+      {text:'Memprioritaskan bagian terpenting dan segera menyelesaikannya.', color:'RED'},
+      {text:'Membuat ulang urutan pekerjaan berdasarkan prioritas dan waktu yang tersedia.', color:'BLUE'},
+      {text:'Berkomunikasi dengan orang yang terlibat agar tidak ada pihak yang tertinggal.', color:'GREEN'},
+      {text:'Menjaga energi tetap positif dan mencari cara agar pekerjaan terasa tidak terlalu berat.', color:'YELLOW'}
+    ]},
+  { id:'c16', topic:'Ketika Suasana Tegang',
+    prompt:'Dalam situasi yang mulai tegang, kamu biasanya...',
+    options:[
+      {text:'Mencoba mengembalikan pembicaraan pada masalah utama.', color:'RED'},
+      {text:'Berusaha menenangkan orang-orang yang terlibat.', color:'GREEN'},
+      {text:'Menggunakan humor atau percakapan ringan untuk mencairkan suasana.', color:'YELLOW'},
+      {text:'Mengidentifikasi penyebab masalah sebelum menentukan respons.', color:'BLUE'}
+    ]},
+  { id:'c17', topic:'Mendapat Tugas yang Monoton',
+    prompt:'Jika mendapatkan pekerjaan yang berulang dan cukup membosankan, kamu cenderung...',
+    options:[
+      {text:'Mencari cara baru agar pekerjaan itu menjadi lebih menarik.', color:'YELLOW'},
+      {text:'Membuat sistem atau pola agar pekerjaan dapat dilakukan lebih efisien.', color:'BLUE'},
+      {text:'Menyelesaikannya dengan konsisten karena pekerjaan itu tetap harus dilakukan.', color:'GREEN'},
+      {text:'Mencari cara tercepat untuk menyelesaikannya dan berpindah ke pekerjaan berikutnya.', color:'RED'}
+    ]},
+  { id:'c18', topic:'Orang Lain Terlalu Banyak Bicara',
+    prompt:'Ketika seseorang menjelaskan sesuatu terlalu panjang, kamu cenderung...',
+    options:[
+      {text:'Tetap mendengarkan karena tidak ingin memotong pembicaraan orang tersebut.', color:'GREEN'},
+      {text:'Mencoba mencari inti pembicaraan dan mengarahkannya pada kesimpulan.', color:'RED'},
+      {text:'Menunggu sampai informasi lengkap sebelum memberikan tanggapan.', color:'BLUE'},
+      {text:'Sesekali memberikan respons spontan agar percakapan tetap hidup.', color:'YELLOW'}
+    ]},
+  { id:'c19', topic:'Menghadapi Perubahan',
+    prompt:'Perusahaan atau timmu memperkenalkan cara kerja baru. Responsmu biasanya...',
+    options:[
+      {text:'Ingin mengetahui detail proses dan aturan barunya terlebih dahulu.', color:'BLUE'},
+      {text:'Melihat peluang baru yang mungkin muncul dari perubahan tersebut.', color:'YELLOW'},
+      {text:'Memikirkan bagaimana perubahan itu akan berdampak pada orang yang menjalankannya.', color:'GREEN'},
+      {text:'Ingin segera mengetahui apa yang harus dilakukan agar bisa langsung beradaptasi.', color:'RED'}
+    ]},
+  { id:'c20', topic:'Memilih Pemimpin',
+    prompt:'Jika harus memilih seseorang untuk memimpin sebuah proyek, kamu lebih memperhatikan apakah orang tersebut...',
+    options:[
+      {text:'Mampu mengarahkan orang dan mengambil keputusan ketika dibutuhkan.', color:'RED'},
+      {text:'Mampu menjaga hubungan dan membuat anggota tim merasa didukung.', color:'GREEN'},
+      {text:'Mampu membangun semangat dan membuat orang antusias mengikuti proyek.', color:'YELLOW'},
+      {text:'Mampu membuat perencanaan dan memastikan detail pekerjaan terkendali.', color:'BLUE'}
+    ]},
+  { id:'c21', topic:'Ketika Rencana Tidak Berjalan',
+    prompt:'Jika rencana yang kamu buat tidak menghasilkan hasil yang diharapkan, kamu cenderung...',
+    options:[
+      {text:'Mencari penyebabnya secara detail dan mengevaluasi prosesnya.', color:'BLUE'},
+      {text:'Mencari alternatif baru dan mencoba pendekatan yang berbeda.', color:'YELLOW'},
+      {text:'Memikirkan apa yang bisa dilakukan agar orang-orang yang terlibat tetap termotivasi.', color:'GREEN'},
+      {text:'Segera menentukan tindakan berikutnya agar tidak terlalu lama berhenti.', color:'RED'}
+    ]},
+  { id:'c22', topic:'Teman Mengubah Janji',
+    prompt:'Seorang teman beberapa kali mengubah jadwal pertemuan. Responsmu kemungkinan...',
+    options:[
+      {text:'Memahami situasinya dan mencoba mencari waktu yang nyaman bagi kedua pihak.', color:'GREEN'},
+      {text:'Memintanya menentukan jadwal yang pasti agar tidak terus berubah.', color:'RED'},
+      {text:'Bertanya alasan perubahan dan mencari informasi agar jadwal berikutnya lebih realistis.', color:'BLUE'},
+      {text:'Menanggapinya dengan santai dan melihat kapan akhirnya bisa bertemu.', color:'YELLOW'}
+    ]},
+  { id:'c23', topic:'Presentasi',
+    prompt:'Saat harus melakukan presentasi, kamu paling nyaman ketika...',
+    options:[
+      {text:'Memiliki struktur materi yang jelas dan mengetahui detail yang akan disampaikan.', color:'BLUE'},
+      {text:'Bisa berbicara secara natural dan berinteraksi dengan audiens.', color:'YELLOW'},
+      {text:'Bisa menyampaikan pesan utama secara langsung dan meyakinkan.', color:'RED'},
+      {text:'Bisa membuat audiens merasa nyaman dan tidak tertekan.', color:'GREEN'}
+    ]},
+  { id:'c24', topic:'Cara Menyelesaikan Masalah',
+    prompt:'Ketika menghadapi sebuah masalah yang cukup kompleks, kamu biasanya memulai dengan...',
+    options:[
+      {text:'Membicarakannya dengan orang lain untuk mendapatkan perspektif berbeda.', color:'YELLOW'},
+      {text:'Memecah masalah menjadi bagian-bagian kecil dan mencari informasi yang dibutuhkan.', color:'BLUE'},
+      {text:'Memikirkan siapa saja yang terdampak dan bagaimana solusi bisa diterima oleh mereka.', color:'GREEN'},
+      {text:'Menentukan tujuan akhir dan mencari langkah paling efektif untuk mencapainya.', color:'RED'}
+    ]}
+];
+
+var TOTAL_QUESTIONS = QUESTIONS.length;
+
+/* ---------------------------- STATE ---------------------------- */
+var state = { name:'', index:0, answers:{} };
+
+function $(id){ return document.getElementById(id); }
+
+/* ---------------------------- LOCAL STORAGE PERSISTENCE ----------------------------
+   Menyimpan progres (nama, indeks pertanyaan, jawaban) ke localStorage browser
+   pengguna sendiri (tidak dikirim ke server manapun), supaya bisa dilanjutkan
+   jika halaman ditutup / reload. Direset lewat tombol "Reset ke Awal" atau
+   "Hapus Data & Mulai dari Awal". */
+var STORAGE_KEY = 'commstyle_progress_v1';
+
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      name: state.name,
+      index: state.index,
+      answers: state.answers
+    }));
+  }catch(e){ /* localStorage tidak tersedia, abaikan */ }
+}
+
+function loadState(){
+  try{
+    var raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+
+function clearState(){
+  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){ /* abaikan */ }
+}
+
+function fullReset(){
+  if (!confirm('Hapus semua jawaban yang tersimpan di browser ini dan mulai dari awal?')) return;
+  clearState();
+  state = { name:'', index:0, answers:{} };
+  $('inpName').value = '';
+  $('screen-quiz').classList.add('hidden');
+  $('screen-result').classList.add('hidden');
+  $('screen-onboarding').classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+
+/* ---------------------------- ONBOARDING ---------------------------- */
+$('btnStart').addEventListener('click', function(){
+  var name = $('inpName').value.trim();
+  if (!name){ $('inpName').focus(); return; }
+  state.name = name;
+  state.index = 0;
+  state.answers = {};
+  saveState();
+  $('screen-onboarding').classList.add('hidden');
+  $('screen-quiz').classList.remove('hidden');
+  renderQuestion();
+});
+
+/* ---------------------------- QUIZ ---------------------------- */
+var letters = ['A','B','C','D'];
+
+function renderQuestion(){
+  var q = QUESTIONS[state.index];
+  $('qCounter').textContent = 'Pertanyaan ' + (state.index+1) + '/' + TOTAL_QUESTIONS;
+  $('qTopic').textContent = q.topic;
+  $('qText').textContent = q.prompt;
+  $('progressFill').style.width = Math.round((state.index/TOTAL_QUESTIONS)*100) + '%';
+  $('btnBack').disabled = (state.index === 0);
+
+  var optWrap = $('qOptions');
+  optWrap.innerHTML = '';
+  q.options.forEach(function(opt, i){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'option-btn' + (state.answers[q.id] === i ? ' selected' : '');
+    btn.innerHTML = '<span class="opt-letter">'+letters[i]+'</span>'+opt.text;
+    btn.addEventListener('click', function(){
+      state.answers[q.id] = i;
+      saveState();
+      var allBtns = optWrap.querySelectorAll('.option-btn');
+      allBtns.forEach(function(b){ b.classList.remove('selected'); b.disabled = true; });
+      btn.classList.add('selected');
+      setTimeout(function(){
+        if (state.index < TOTAL_QUESTIONS-1){
+          state.index++;
+          saveState();
+          renderQuestion();
+        } else {
+          finishAssessment();
+        }
+      }, 280);
+    });
+    optWrap.appendChild(btn);
+  });
+}
+
+$('btnBack').addEventListener('click', function(){
+  if (state.index > 0){
+    state.index--;
+    saveState();
+    renderQuestion();
+  }
+});
+
+$('btnResetQuiz').addEventListener('click', fullReset);
+$('btnFullReset').addEventListener('click', fullReset);
+
+/* ---------------------------- SCORING ---------------------------- */
+function computeScores(){
+  var scores = { RED:0, YELLOW:0, GREEN:0, BLUE:0 };
+  QUESTIONS.forEach(function(q){
+    var chosen = state.answers[q.id];
+    if (chosen !== undefined){
+      var color = q.options[chosen].color;
+      scores[color]++;
+    }
+  });
+  return scores;
+}
+
+function interpretationOf(pct){
+  if (pct >= 85) return 'Dominant';
+  if (pct >= 70) return 'Strong';
+  if (pct >= 55) return 'Moderate';
+  if (pct >= 40) return 'Developing';
+  return 'Lower Tendency';
+}
+
+function finishAssessment(){
+  var scores = computeScores();
+  var ranked = COLOR_ORDER
+    .map(function(c){ return { color:c, score:scores[c], pct:Math.round((scores[c]/TOTAL_QUESTIONS)*100) }; })
+    .sort(function(a,b){ return b.score - a.score; });
+
+  renderResult(ranked);
+  saveState();
+
+  $('screen-quiz').classList.add('hidden');
+  $('screen-result').classList.remove('hidden');
+  $('exportStatus').textContent = '';
+  window.scrollTo(0,0);
+
+  sendResultToBackend(scores, ranked[0].color, ranked[1].color);
+}
+
+/* ---------------------------- RESULT RENDER ---------------------------- */
+function styleChipHtml(colorInfo, labelTag){
+  var meta = COLOR_META[colorInfo.color];
+  return '<div class="style-chip">'+
+    '<div class="chip-icon" style="background:var(--panel-3); border:1px solid var(--line);">'+
+      '<span class="material-symbols-outlined icon-lg filled" style="color:var('+meta.var+');">'+meta.icon+'</span>'+
+    '</div>'+
+    '<div class="chip-text">'+
+      '<div class="chip-label">'+labelTag+'</div>'+
+      '<div class="chip-name">'+colorInfo.color+' &middot; '+meta.label+'</div>'+
+    '</div>'+
+  '</div>';
+}
+
+function renderResult(ranked){
+  var primary = ranked[0], secondary = ranked[1];
+
+  $('styleChips').innerHTML =
+    styleChipHtml(primary, 'Primary Style') +
+    styleChipHtml(secondary, 'Secondary Style');
+  $('resultName').textContent = state.name + ' menunjukkan kecenderungan gaya komunikasi dalam assessment ini, bukan penilaian baik atau buruk.';
+
+  // Chart skor per warna
+  var chartBox = $('scoreChartBox');
+  chartBox.innerHTML = '';
+  ranked.forEach(function(r){
+    var meta = COLOR_META[r.color];
+    var row = document.createElement('div');
+    row.className = 'style-row';
+    row.innerHTML =
+      '<div class="style-row-top"><span>'+r.color+' &middot; '+meta.label+'</span><span>'+r.score+'/'+TOTAL_QUESTIONS+' ('+r.pct+'%)</span></div>'+
+      '<div class="bar-track"><div class="bar-fill" style="width:'+r.pct+'%; background:var('+meta.var+');"></div></div>';
+    chartBox.appendChild(row);
+  });
+
+  // Tabel skor
+  var rows = ranked.map(function(r){
+    var meta = COLOR_META[r.color];
+    return '<tr><td>'+r.color+' &middot; '+meta.label+'</td><td class="num">'+r.score+' / '+TOTAL_QUESTIONS+'</td><td class="num">'+r.pct+'%</td><td>'+interpretationOf(r.pct)+'</td></tr>';
+  }).join('');
+  $('scoreTable').innerHTML =
+    '<thead><tr><th>Gaya</th><th>Skor</th><th>Persentase</th><th>Tingkat</th></tr></thead><tbody>'+rows+'</tbody>';
+
+  // Strength & challenge dari gaya utama
+  $('strengthList').innerHTML = STRENGTHS[primary.color].map(function(s){ return '<li>'+s+'</li>'; }).join('');
+  $('challengeList').innerHTML = CHALLENGES[primary.color].map(function(s){ return '<li>'+s+'</li>'; }).join('');
+
+  // Tips gabungan primary + secondary (unik)
+  var tips = SELF_TIPS[primary.color].concat(SELF_TIPS[secondary.color]);
+  $('tipsList').innerHTML = tips.map(function(t){ return '<li>'+t+'</li>'; }).join('');
+
+  // Cara berkomunikasi dengan tiap gaya (referensi tetap, semua warna)
+  var howtoBox = $('howtoBox');
+  howtoBox.innerHTML = '';
+  COLOR_ORDER.forEach(function(c){
+    var meta = COLOR_META[c];
+    var item = document.createElement('div');
+    item.className = 'howto-item';
+    item.innerHTML =
+      '<div class="howto-icon" style="background:var(--panel-3); border:1px solid var(--line);">'+
+        '<span class="material-symbols-outlined filled" style="color:var('+meta.var+');">'+meta.icon+'</span>'+
+      '</div>'+
+      '<div class="howto-body"><h3>'+c+' &middot; '+meta.label+'</h3><p>'+HOWTO_OTHERS[c]+'</p></div>';
+    howtoBox.appendChild(item);
+  });
+}
+
+/* ---------------------------- RETAKE ---------------------------- */
+$('btnRetake').addEventListener('click', function(){
+  state.index = 0;
+  state.answers = {};
+  saveState();
+  $('screen-result').classList.add('hidden');
+  $('screen-quiz').classList.remove('hidden');
+  renderQuestion();
+  window.scrollTo(0,0);
+});
+
+/* ---------------------------- EXPORT: IMAGE (PNG) & PDF ----------------------------
+   Menggunakan html2canvas untuk merender kartu hasil (#resultCapture) menjadi
+   canvas, lalu:
+   - PNG: langsung diunduh dari canvas.
+   - PDF: canvas dimasukkan sebagai gambar ke dokumen jsPDF, dipecah otomatis
+     ke beberapa halaman A4 jika hasilnya lebih panjang dari satu halaman.
+   Tombol export & baris tombol lain disembunyikan sementara saat capture
+   agar tidak ikut terekam dalam gambar/PDF. */
+
+function safeFileName(base){
+  var n = (state.name || 'hasil').trim().replace(/[^a-z0-9\-_ ]/gi, '').replace(/\s+/g, '-');
+  return (n || 'hasil') + '-' + base;
+}
+
+function setExportStatus(msg, isError){
+  var el = $('exportStatus');
+  el.textContent = msg || '';
+  el.style.color = isError ? 'var(--red)' : 'var(--sky)';
+}
+
+function captureResultCanvas(){
+  var target = $('resultCapture');
+  var bodyBg = getComputedStyle(document.body).backgroundColor;
+  return html2canvas(target, {
+    backgroundColor: bodyBg || '#080b09',
+    scale: window.devicePixelRatio > 1 ? 2 : 2,
+    useCORS: true,
+    logging: false
+  });
+}
+
+$('btnExportImage').addEventListener('click', function(){
+  if (typeof html2canvas === 'undefined'){
+    setExportStatus('Gagal memuat pustaka export gambar. Periksa koneksi internet.', true);
+    return;
+  }
+  setExportStatus('Menyiapkan gambar…');
+  captureResultCanvas().then(function(canvas){
+    var link = document.createElement('a');
+    link.download = safeFileName('gaya-komunikasi') + '.png';
+    link.href = canvas.toDataURL('image/png');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setExportStatus('Gambar berhasil diunduh.');
+  }).catch(function(err){
+    console.error(err);
+    setExportStatus('Gagal membuat gambar. Coba lagi.', true);
+  });
+});
+
+$('btnExportPdf').addEventListener('click', function(){
+  if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined'){
+    setExportStatus('Gagal memuat pustaka export PDF. Periksa koneksi internet.', true);
+    return;
+  }
+  setExportStatus('Menyiapkan PDF…');
+  captureResultCanvas().then(function(canvas){
+    var jsPDF = window.jspdf.jsPDF;
+    var imgData = canvas.toDataURL('image/png');
+
+    var pageWidth = 595.28;   // A4 pt, portrait
+    var pageHeight = 841.89;
+    var margin = 24;
+    var usableWidth = pageWidth - margin * 2;
+    var imgWidthPt = usableWidth;
+    var imgHeightPt = (canvas.height * imgWidthPt) / canvas.width;
+
+    var pdf = new jsPDF('p', 'pt', 'a4');
+    var usableHeight = pageHeight - margin * 2;
+
+    if (imgHeightPt <= usableHeight){
+      pdf.addImage(imgData, 'PNG', margin, margin, imgWidthPt, imgHeightPt);
+    } else {
+      // Pecah gambar ke beberapa halaman
+      var pageCanvasHeightPx = Math.floor((usableHeight * canvas.width) / imgWidthPt);
+      var renderedHeightPx = 0;
+      var first = true;
+      while (renderedHeightPx < canvas.height){
+        var sliceHeightPx = Math.min(pageCanvasHeightPx, canvas.height - renderedHeightPx);
+        var pageCanvas = document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = sliceHeightPx;
+        var ctx = pageCanvas.getContext('2d');
+        ctx.drawImage(canvas, 0, renderedHeightPx, canvas.width, sliceHeightPx, 0, 0, canvas.width, sliceHeightPx);
+        var sliceData = pageCanvas.toDataURL('image/png');
+        var sliceHeightPt = (sliceHeightPx * imgWidthPt) / canvas.width;
+
+        if (!first) pdf.addPage();
+        pdf.addImage(sliceData, 'PNG', margin, margin, imgWidthPt, sliceHeightPt);
+
+        renderedHeightPx += sliceHeightPx;
+        first = false;
+      }
+    }
+
+    pdf.save(safeFileName('gaya-komunikasi') + '.pdf');
+    setExportStatus('PDF berhasil diunduh.');
+  }).catch(function(err){
+    console.error(err);
+    setExportStatus('Gagal membuat PDF. Coba lagi.', true);
+  });
+});
+
+/* ---------------------------- SEND TO BACKEND (Code.gs) ----------------------------
+   Opsional & tidak memblokir UI, hanya mencatat ringkasan skor akhir ke
+   Google Sheet lewat saveCommStyleResult di Code.gs. Bank soal dan seluruh
+   logika scoring tetap 100% berjalan di client (hardcoded di atas). */
+function sendResultToBackend(scores, primaryColor, secondaryColor){
+  try{
+    if (typeof google !== 'undefined' && google.script && google.script.run){
+      google.script.run
+        .withSuccessHandler(function(){})
+        .withFailureHandler(function(){})
+        .saveCommStyleResult({
+          nama: state.name,
+          red: scores.RED,
+          yellow: scores.YELLOW,
+          green: scores.GREEN,
+          blue: scores.BLUE,
+          primary: primaryColor,
+          secondary: secondaryColor
+        });
+    }
+  }catch(e){ /* berjalan di luar Apps Script, mis. preview lokal, abaikan */ }
+}
+
+/* ---------------------------- RESTORE PROGRESS ON LOAD ----------------------------
+   Dijalankan sekali saat halaman dibuka. Jika ada progres tersimpan di
+   localStorage: jika semua 24 pertanyaan sudah terjawab, langsung tampilkan
+   layar hasil (tanpa mengirim ulang ke backend); jika sebagian terjawab,
+   lanjutkan ke pertanyaan terakhir; jika hanya nama yang tersimpan, isi
+   kembali field nama di layar onboarding. */
+(function restoreProgress(){
+  var saved = loadState();
+  if (!saved || !saved.name) return;
+
+  state.name = saved.name;
+  state.answers = saved.answers || {};
+  state.index = (typeof saved.index === 'number') ? saved.index : 0;
+
+  var answeredCount = Object.keys(state.answers).length;
+
+  if (answeredCount >= TOTAL_QUESTIONS){
+    var scores = computeScores();
+    var ranked = COLOR_ORDER
+      .map(function(c){ return { color:c, score:scores[c], pct:Math.round((scores[c]/TOTAL_QUESTIONS)*100) }; })
+      .sort(function(a,b){ return b.score - a.score; });
+    renderResult(ranked);
+    $('screen-onboarding').classList.add('hidden');
+    $('screen-result').classList.remove('hidden');
+  } else if (answeredCount > 0 || state.index > 0){
+    $('inpName').value = state.name;
+    if (state.index >= TOTAL_QUESTIONS) state.index = TOTAL_QUESTIONS - 1;
+    $('screen-onboarding').classList.add('hidden');
+    $('screen-quiz').classList.remove('hidden');
+    renderQuestion();
+  } else {
+    $('inpName').value = state.name;
+  }
+})();
+</script>
+</body>
+</html>

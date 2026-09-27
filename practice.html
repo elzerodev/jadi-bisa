@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<base target="_top">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice [SkillCheck]</title>
+<script>
+(function(){
+  try{
+    var THEME_KEY = 'ela_theme';
+    var saved = localStorage.getItem(THEME_KEY);
+    var theme = (saved === 'light' || saved === 'dark') ? saved :
+      ((window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme);
+  }catch(e){}
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080b09; --panel-2:#161d19; --panel-3:#1c2420; --line:#26312b;
+  --text:#e9efe9; --text-dim:#8ba396; --text-dim-2:#5e7268;
+  --sky:#4dd0e1; --sky-dim:#1f8a95; --btn-text:#0a1006;
+  --amber:#f2b84b; --red:#e07a6b; --green:#7bc99a;
+  --mono:'JetBrains Mono', ui-monospace, monospace;
+  --sans:'Manrope', -apple-system, sans-serif;
+}
+:root[data-theme="light"]{
+  --bg:#f3f6f0; --panel-2:#eef2e9; --panel-3:#e1e8da; --line:#d6ddce;
+  --text:#141b15; --text-dim:#4c5b4f; --text-dim-2:#78887a;
+  --sky:#0f7a86; --sky-dim:#0b5c65; --btn-text:#ffffff;
+  --amber:#a9760f; --red:#b8382a; --green:#2f8f5b;
+}
+*{box-sizing:border-box;}
+.material-symbols-outlined{
+  font-family:'Material Symbols Outlined';
+  font-weight:normal; font-style:normal;
+  font-size:20px; line-height:1; display:inline-block;
+  vertical-align:middle; white-space:nowrap; word-wrap:normal;
+  direction:ltr; -webkit-font-feature-settings:'liga'; -webkit-font-smoothing:antialiased;
+  font-variation-settings:'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+}
+.material-symbols-outlined.filled{ font-variation-settings:'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 20; }
+.icon-sm{ font-size:16px; }
+.icon-lg{ font-size:24px; }
+html,body{margin:0;padding:0;}
+body{background:var(--bg); color:var(--text); font-family:var(--sans); min-height:100vh;}
+#app{max-width:760px; margin:0 auto; padding:22px 18px 48px;}
+#topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:20px; padding-bottom:14px; border-bottom:1px solid var(--line); flex-wrap:wrap;}
+.brand{display:flex; align-items:center; gap:10px; font-family:var(--mono); font-weight:700; font-size:14px; color:var(--sky); text-decoration:none;}
+.brand .dot{width:9px; height:9px; border-radius:50%; background:var(--sky); box-shadow:0 0 10px var(--sky);}
+.navlinks{display:flex; gap:14px;}
+.navlinks a{font-family:var(--mono); font-size:12px; color:var(--text-dim); text-decoration:none;}
+.navlinks a:hover{color:var(--sky);}
+
+.badge{display:inline-block; font-family:var(--mono); font-size:11px; color:var(--sky); border:1px solid rgba(77,208,225,.35); background:rgba(77,208,225,.08); padding:5px 12px; border-radius:20px; margin-bottom:14px;}
+h1{font-family:var(--mono); font-size:clamp(22px,5vw,28px); margin:0 0 10px; line-height:1.25;}
+h2{font-family:var(--mono); font-size:16px; margin:0;}
+h3{font-family:var(--mono); font-size:14px; margin:0 0 4px;}
+p{color:var(--text-dim); font-size:14px; line-height:1.6; max-width:600px; margin:0 0 16px;}
+
+.card{background:var(--panel-2); border:1px solid var(--line); border-radius:14px; padding:18px; margin-bottom:14px;}
+
+.xpbar-wrap{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+.xp-score{font-family:var(--mono); font-weight:800; font-size:26px; color:var(--sky);}
+.level-pill{font-family:var(--mono); font-size:12px; padding:4px 12px; border-radius:20px; border:1px solid var(--line);}
+.badgerow{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
+.badgechip{font-family:var(--mono); font-size:11.5px; padding:5px 10px; border-radius:20px; border:1px solid var(--line); color:var(--text-dim-2);}
+.badgechip.earned{color:var(--amber); border-color:rgba(242,184,75,.4); background:rgba(242,184,75,.08);}
+
+.accordion-item{border:1px solid var(--line); border-radius:12px; margin-bottom:10px; overflow:hidden; background:var(--panel-2);}
+.accordion-head{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; cursor:pointer; gap:10px;}
+.accordion-head .left{display:flex; align-items:center; gap:10px;}
+.accordion-head .icon{font-size:18px;}
+.accordion-head .meta{font-family:var(--mono); font-size:11.5px; color:var(--text-dim-2);}
+.accordion-head .chev{color:var(--text-dim); transition:transform .2s;}
+.accordion-item.open .chev{transform:rotate(90deg);}
+.accordion-body{display:none; padding:0 16px 16px;}
+.accordion-item.open .accordion-body{display:block;}
+
+.module-block{background:var(--panel-3); border:1px solid var(--line); border-radius:10px; padding:14px; margin-bottom:12px;}
+.module-block.done{border-color:rgba(123,201,154,.4);}
+.module-title{font-weight:700; font-size:14px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; gap:8px;}
+.status-tag{font-family:var(--mono); font-size:10.5px; padding:3px 9px; border-radius:20px; border:1px solid var(--line); color:var(--text-dim-2); white-space:nowrap;}
+.status-tag.done{color:var(--green); border-color:rgba(123,201,154,.4);}
+.tip-text{font-size:13.5px; color:var(--text-dim); margin-bottom:12px; line-height:1.6;}
+
+.challenge-q{font-size:13.5px; margin-bottom:10px;}
+.option-btn{
+  display:block; width:100%; text-align:left; background:var(--panel-2); border:1px solid var(--line);
+  color:var(--text); font-family:var(--sans); font-size:13.5px; padding:10px 12px; border-radius:8px;
+  margin-bottom:8px; cursor:pointer;
+}
+.option-btn .opt-letter{font-family:var(--mono); color:var(--sky); margin-right:6px; font-weight:700;}
+.option-btn.selected{border-color:var(--sky); background:rgba(77,208,225,.08);}
+.option-btn.correct{border-color:var(--green); background:rgba(123,201,154,.1);}
+.option-btn.wrong{border-color:var(--red); background:rgba(224,122,107,.1);}
+.feedback-box{font-size:13px; padding:10px 12px; border-radius:8px; margin-top:6px; border:1px solid var(--line); background:var(--panel-2);}
+.feedback-box.ok{color:var(--green); border-color:rgba(123,201,154,.4);}
+.feedback-box.no{color:var(--red); border-color:rgba(224,122,107,.4);}
+
+.btn{
+  font-family:var(--mono); font-weight:700; font-size:13px;
+  background:var(--sky); color:var(--btn-text); border:none; padding:10px 16px; border-radius:8px;
+  text-decoration:none; display:inline-block; cursor:pointer;
+}
+.btn:disabled{opacity:.4; cursor:not-allowed;}
+.btn.ghost{background:transparent; color:var(--sky); border:1px solid var(--sky-dim);}
+.btn.small{padding:7px 12px; font-size:12px;}
+.btn-row{display:flex; gap:10px; margin-top:6px; flex-wrap:wrap;}
+
+.step-track{font-family:var(--mono); font-size:11.5px; color:var(--text-dim-2); margin-bottom:10px;}
+.qdata{font-family:var(--mono); font-size:12.5px; background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-bottom:12px; white-space:pre; overflow-x:auto;}
+
+.checklist label{display:flex; align-items:flex-start; gap:10px; font-size:13.5px; color:var(--text); margin-bottom:10px; cursor:pointer;}
+.checklist input{margin-top:3px;}
+
+.section-title{font-family:var(--mono); font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.06em; margin:22px 0 10px;}
+.note{font-family:var(--mono); font-size:11.5px; color:var(--text-dim-2); margin-top:4px;}
+.site-footer{margin-top:30px; padding:18px 0 26px; border-top:1px solid var(--line); text-align:center; font-family:var(--mono); font-size:11.5px; color:var(--text-dim-2);}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span> PRACTICE</a>
+    <div class="navlinks">
+      <a href="skillcheck.html"><span class="material-symbols-outlined icon-sm" style="vertical-align:-3px;">arrow_back</span> SkillCheck</a>
+      <a href="logicacademy.html"><span class="material-symbols-outlined icon-sm" style="vertical-align:-3px;">function</span> Excel Logic Academy</a>
+    </div>
+  </div>
+
+  <span class="badge">LATIHAN TERARAH · BERDASARKAN SKILL GAP</span>
+  <h1>Asah skill-mu, bukan sekadar kerjakan quiz.</h1>
+  <p>Tiap modul berisi tips singkat + satu tantangan mini. Selesaikan modul yang sesuai rekomendasi SkillCheck-mu, coba Data Detective Mode, atau kerjakan checklist Mini Project.</p>
+
+  <div class="card">
+    <div class="xpbar-wrap">
+      <div class="xp-score" id="xpScore">0 XP</div>
+      <div class="level-pill" id="levelPill">Bronze</div>
+    </div>
+    <div class="badgerow" id="badgeRow"></div>
+    <div class="note" style="margin-top:10px;" id="progressNote"></div>
+  </div>
+
+  <div class="section-title">Modul per Skill</div>
+  <div id="skillAccordionWrap"></div>
+
+  <div class="section-title">Data Detective Mode</div>
+  <div class="card" id="detectiveCard"></div>
+
+  <div class="section-title">Mini Project — Sales Analysis</div>
+  <div class="card" id="projectCard"></div>
+
+  <footer class="site-footer"><span style="color:var(--sky)">&lt;/&gt;</span> 2026 dikiLabs</footer>
+</div>
+
+<script>
+/* =========================================================================
+   PRACTICE — semua materi (lesson tip, micro-challenge, kasus Data Detective,
+   checklist Mini Project) di-hardcode di sini, TERPISAH dari skillcheck.html,
+   supaya menambah/mengubah materi latihan cukup edit file ini saja.
+   Skill id di bawah SENGAJA disamakan dengan skillcheck.html (analytical,
+   problem, data, excel, sql, business, detail, decision) supaya deep-link
+   ?page=practice&skill=sql dari halaman rekomendasi SkillCheck bisa langsung
+   membuka skill yang relevan.
+   ========================================================================= */
+
+var SKILL_META = {
+  analytical: { name:'Analytical Thinking', icon:'psychology' },
+  problem:    { name:'Problem Solving',      icon:'construction' },
+  data:       { name:'Data Literacy',        icon:'dataset', badge:'Data Explorer' },
+  excel:      { name:'Excel / Spreadsheet',  icon:'grid_on', badge:'Excel Starter' },
+  sql:        { name:'SQL',                  icon:'storage', badge:'SQL Explorer' },
+  business:   { name:'Business Understanding', icon:'business_center', badge:'Business Thinker' },
+  detail:     { name:'Attention to Detail',  icon:'search', badge:null },
+  decision:   { name:'Decision Making',      icon:'balance', badge:null }
+};
+
+/* Tambah materi baru cukup push object baru ke array modul skill terkait.
+   Struktur tiap modul:
+   { id, title, tip, challenge:{ question, data(optional), options[], correct, explanation } } */
+var PRACTICE_MODULES = {
+  analytical: [
+    {
+      id:'analytical-1', title:'Root Cause Analysis Basics',
+      tip:'Sebelum menyimpulkan penyebab suatu masalah, pecah dulu (breakdown) berdasarkan dimensi yang relevan: waktu, wilayah, produk, atau segmen customer. Pola yang muncul dari breakdown ini menuntun ke root cause yang lebih akurat daripada menebak langsung.',
+      challenge:{
+        question:'Konversi checkout di aplikasi turun 25% minggu ini. Langkah paling tepat sebelum menyimpulkan penyebab adalah…',
+        options:['Langsung mengubah desain tombol checkout.','Memeriksa apakah penurunan terjadi di semua platform (web/app) atau hanya salah satu.','Menunggu satu bulan untuk melihat tren.','Menyalahkan tim marketing.'],
+        correct:1,
+        explanation:'Breakdown per platform/segmen adalah langkah dasar sebelum menuduh satu penyebab tunggal.'
+      }
+    },
+    {
+      id:'analytical-2', title:'Structured Problem Framing',
+      tip:'Framing masalah yang baik dimulai dari pertanyaan spesifik dan terukur ("apa yang berubah, kapan, seberapa besar") — bukan pertanyaan umum seperti "kenapa bisnis jelek". Semakin spesifik framing-nya, semakin cepat ditemukan penyebabnya.',
+      challenge:{
+        question:'Mana pertanyaan yang paling baik untuk memulai investigasi masalah "penjualan menurun"?',
+        options:['"Kenapa penjualan kita jelek?"','"Sejak kapan penjualan mulai turun, dan berapa persen penurunannya per kategori produk?"','"Siapa yang salah?"','"Apakah kita perlu produk baru?"'],
+        correct:1,
+        explanation:'Pertanyaan yang spesifik dan terukur (waktu + besaran + dimensi) lebih mudah dijawab dengan data dibanding pertanyaan umum.'
+      }
+    }
+  ],
+  problem: [
+    {
+      id:'problem-1', title:'Problem Solving Framework',
+      tip:'Framework sederhana: Define (apa masalahnya) → Analyze (kenapa terjadi) → Decide (opsi solusi) → Act (eksekusi) → Review (evaluasi hasil). Melompat langsung ke "Act" tanpa Define/Analyze sering menghasilkan solusi yang salah sasaran.',
+      challenge:{
+        question:'Tim Anda langsung mengganti vendor pengiriman karena banyak komplain keterlambatan, tanpa mengecek dulu apakah keterlambatan terjadi di semua rute atau hanya rute tertentu. Kesalahan dalam framework problem solving di sini adalah…',
+        options:['Terlalu lama menganalisis.','Melompat ke tahap Act tanpa Analyze yang cukup.','Terlalu banyak vendor.','Tidak melibatkan customer.'],
+        correct:1,
+        explanation:'Mengganti vendor tanpa analisis rute berisiko mengganti hal yang sebenarnya tidak bermasalah, sementara akar masalah tetap ada.'
+      }
+    },
+    {
+      id:'problem-2', title:'Decision Tree Basics',
+      tip:'Saat menghadapi banyak pilihan dengan berbagai kemungkinan hasil, memetakan opsi dan konsekuensinya dalam bentuk pohon keputusan sederhana membantu membandingkan trade-off secara objektif, bukan berdasarkan feeling.',
+      challenge:{
+        question:'Kapan decision tree paling berguna?',
+        options:['Saat hanya ada satu pilihan tanpa alternatif.','Saat ada beberapa opsi dengan konsekuensi/risiko berbeda yang perlu dibandingkan.','Saat keputusan tidak penting.','Saat semua opsi identik.'],
+        correct:1,
+        explanation:'Decision tree berguna untuk membandingkan beberapa opsi dengan konsekuensi berbeda secara terstruktur.'
+      }
+    }
+  ],
+  data: [
+    {
+      id:'data-1', title:'Data Cleaning 101',
+      tip:'Empat pemeriksaan dasar sebelum analisis: format yang tidak konsisten (tanggal, teks), data duplikat, nilai kosong (missing value), dan outlier yang tidak wajar. Lewati satu saja, hasil analisis bisa menyesatkan.',
+      challenge:{
+        question:'Kolom "Kota" berisi: "Jakarta", "jakarta", "JKT", "Jakarta ". Sebelum dianalisis, hal pertama yang perlu dilakukan adalah…',
+        options:['Menganalisis langsung, karena semua tetap terbaca "Jakarta" oleh manusia.','Menstandarkan penulisan menjadi satu format yang konsisten.','Menghapus kolom tersebut.','Mengganti semua menjadi angka.'],
+        correct:1,
+        explanation:'Tanpa standardisasi, sistem akan menghitung 4 kategori kota berbeda padahal maksudnya sama, sehingga agregasi per kota jadi salah.'
+      }
+    },
+    {
+      id:'data-2', title:'Data Quality Checklist',
+      tip:'Sebelum mempresentasikan hasil analisis, cek: apakah total baris masuk akal, apakah ada nilai negatif yang tidak seharusnya (misal umur -5), dan apakah rentang tanggal sesuai periode yang diminta.',
+      challenge:{
+        question:'Anda menemukan baris dengan "Jumlah Pembelian: -3" pada data retail. Interpretasi paling tepat adalah…',
+        options:['Itu wajar, customer membeli barang negatif.','Kemungkinan itu adalah retur/pengembalian barang, atau kesalahan input — perlu diklarifikasi definisinya.','Abaikan saja karena hanya satu baris.','Ubah otomatis menjadi 3 (positif).'],
+        correct:1,
+        explanation:'Nilai negatif pada kuantitas pembelian biasanya punya arti bisnis tertentu (retur) atau merupakan error — perlu diverifikasi, bukan diabaikan/diubah sembarangan.'
+      }
+    }
+  ],
+  excel: [
+    {
+      id:'excel-1', title:'VLOOKUP & INDEX-MATCH',
+      tip:'VLOOKUP mencari nilai berdasarkan key di kolom paling kiri tabel referensi. INDEX-MATCH lebih fleksibel karena tidak terbatas mencari ke kanan saja. Untuk data yang sering berubah struktur kolomnya, INDEX-MATCH lebih aman.',
+      challenge:{
+        question:'Kapan INDEX-MATCH lebih disarankan dibanding VLOOKUP biasa?',
+        options:['Saat kolom hasil berada di sebelah kiri kolom kunci pencarian.','Saat data hanya satu baris.','Saat tidak ada data sama sekali.','VLOOKUP selalu lebih baik dalam kondisi apa pun.'],
+        correct:0,
+        explanation:'VLOOKUP hanya bisa mencari ke kanan dari kolom kunci; INDEX-MATCH bisa mengambil nilai dari kolom mana pun, termasuk di sebelah kiri.'
+      }
+    },
+    {
+      id:'excel-2', title:'Pivot Table Mastery',
+      tip:'Pivot Table paling berguna untuk meringkas data mentah (ribuan baris) menjadi ringkasan per kategori (misalnya total penjualan per region per bulan) tanpa menulis formula manual satu per satu.',
+      challenge:{
+        question:'Anda punya 50.000 baris transaksi dan ingin tahu total penjualan per region per bulan dengan cepat. Tools Excel paling tepat adalah…',
+        options:['Mengetik manual satu per satu.','Pivot Table.','Mengubah warna sel.','Menghapus kolom yang tidak perlu.'],
+        correct:1,
+        explanation:'Pivot Table dirancang khusus untuk meringkas data besar berdasarkan beberapa dimensi sekaligus secara cepat.'
+      }
+    }
+  ],
+  sql: [
+    {
+      id:'sql-1', title:'SELECT & WHERE',
+      tip:'SELECT menentukan kolom apa yang ditampilkan, WHERE menyaring baris berdasarkan kondisi. Urutan logis: filter dulu (WHERE) baru pilih kolom yang relevan (SELECT).',
+      challenge:{
+        question:'Query mana yang benar untuk menampilkan nama & total transaksi customer dengan status "Aktif" saja?',
+        options:['SELECT nama, total FROM customer WHERE status = "Aktif"','SELECT nama, total FROM customer GROUP BY status', 'WHERE status = "Aktif" SELECT nama, total','SELECT * ORDER BY status'],
+        correct:0,
+        explanation:'SELECT menentukan kolom yang ditampilkan, WHERE menyaring baris — kombinasi ini yang paling tepat untuk kebutuhan tersebut.'
+      }
+    },
+    {
+      id:'sql-2', title:'JOIN & GROUP BY',
+      tip:'JOIN menggabungkan dua tabel berdasarkan kolom kunci yang sama (misal customer_id), sedangkan GROUP BY mengelompokkan hasil gabungan tersebut untuk dihitung per kelompok (SUM, COUNT, AVG).',
+      challenge:{
+        question:'Anda punya tabel "transaksi" dan tabel "customer" terpisah, dan ingin menghitung total belanja per nama customer. Yang dibutuhkan adalah…',
+        options:['JOIN kedua tabel lalu GROUP BY nama customer.','Menghapus salah satu tabel.','ORDER BY tanpa JOIN.','Menggabungkan manual satu per satu di luar SQL.'],
+        correct:0,
+        explanation:'JOIN menggabungkan data dari dua tabel berdasarkan relasi, lalu GROUP BY mengelompokkan hasilnya per customer untuk dihitung totalnya.'
+      }
+    }
+  ],
+  business: [
+    {
+      id:'business-1', title:'Business Metrics & KPI',
+      tip:'Revenue naik tidak selalu berarti bisnis sehat — perlu dilihat bersama metrik lain seperti margin, retention, dan Average Order Value (AOV) untuk memahami gambaran utuh.',
+      challenge:{
+        question:'Revenue naik 10%, tapi margin (keuntungan) turun 5%. Insight paling mungkin adalah…',
+        options:['Bisnis pasti sedang sangat sehat.','Kenaikan revenue kemungkinan didorong diskon besar atau biaya produksi naik, sehingga tidak sepenuhnya menguntungkan.','Data pasti salah.','Margin tidak penting selama revenue naik.'],
+        correct:1,
+        explanation:'Revenue naik tapi margin turun sering menandakan strategi diskon agresif atau kenaikan biaya — perlu dianalisis lebih lanjut, bukan hanya dirayakan.'
+      }
+    },
+    {
+      id:'business-2', title:'Stakeholder Communication',
+      tip:'Saat menyampaikan hasil analisis ke stakeholder non-teknis, mulai dari kesimpulan/insight utama dulu, baru detail data pendukung — bukan sebaliknya (data dulu, baru kesimpulan di akhir).',
+      challenge:{
+        question:'Struktur presentasi hasil analisis yang paling efektif untuk manajemen adalah…',
+        options:['Semua tabel mentah dulu, kesimpulan di slide terakhir.','Kesimpulan & rekomendasi di awal, detail data sebagai pendukung.','Hanya angka tanpa konteks.','Sepanjang presentasi berisi istilah teknis tanpa penjelasan.'],
+        correct:1,
+        explanation:'Stakeholder non-teknis biasanya butuh insight & rekomendasi terlebih dahulu (top-down), baru detail pendukung jika diperlukan.'
+      }
+    }
+  ],
+  detail: [
+    {
+      id:'detail-1', title:'Data Validation Practice',
+      tip:'Kategori teks yang seharusnya sama sering tertulis beda (typo, kapitalisasi, spasi ekstra). Selalu cek daftar nilai unik (distinct values) pada kolom kategori sebelum dianalisis.',
+      challenge:{
+        question:'Kolom "Status" berisi nilai unik: "Selesai", "selesai", "Selsai", "Belum". Masalah utamanya adalah…',
+        options:['Tidak ada masalah.','Ada inkonsistensi penulisan & kemungkinan typo ("Selsai") yang perlu distandarkan.','Kolom ini seharusnya dihapus.','Semua nilai sudah benar.'],
+        correct:1,
+        explanation:'"Selesai", "selesai", dan "Selsai" (typo) merujuk ke makna yang sama tapi akan terhitung terpisah jika tidak dibersihkan.'
+      }
+    },
+    {
+      id:'detail-2', title:'Anomaly Detection Basics',
+      tip:'Cara cepat mendeteksi anomali: bandingkan setiap nilai dengan rentang normal kelompoknya. Nilai yang jauh melenceng (misal 100x lebih besar/kecil) patut dicurigai sebagai kesalahan input, bukan otomatis dianggap benar.',
+      challenge:{
+        question:'Rata-rata gaji di divisi Anda Rp8.000.000, tapi ada satu baris tertulis Rp80.000.000.000. Tindakan paling tepat adalah…',
+        options:['Menganggapnya benar karena tertulis di sistem.','Menandainya sebagai kemungkinan anomali/typo dan mengecek ulang sumber datanya.','Menghapus semua data divisi tersebut.','Mengabaikannya karena hanya satu baris.'],
+        correct:1,
+        explanation:'Nilai yang melenceng ekstrem dari rentang wajar perlu diverifikasi ke sumber data, bukan langsung dipakai atau langsung dihapus tanpa cek.'
+      }
+    }
+  ],
+  decision: [
+    {
+      id:'decision-1', title:'Risk Assessment Basics',
+      tip:'Menilai risiko idealnya mempertimbangkan dua hal sekaligus: seberapa besar dampaknya jika terjadi, dan seberapa besar kemungkinan (probabilitas) hal itu terjadi — bukan hanya salah satunya.',
+      challenge:{
+        question:'Risiko mana yang paling mendesak untuk ditangani lebih dulu?',
+        options:['Dampak kecil, kemungkinan terjadi sangat kecil.','Dampak besar, kemungkinan terjadi tinggi.','Tidak ada risiko sama sekali.','Risiko yang sudah lewat waktunya.'],
+        correct:1,
+        explanation:'Risiko dengan kombinasi dampak besar dan probabilitas tinggi adalah prioritas utama untuk mitigasi.'
+      }
+    },
+    {
+      id:'decision-2', title:'Inventory & Supply Reasoning',
+      tip:'Untuk soal stock/inventory, selalu bandingkan tiga angka bersamaan: stock saat ini, kecepatan pemakaian (usage rate), dan lead time kedatangan supply berikutnya — sebelum menyimpulkan kekurangan atau kelebihan.',
+      challenge:{
+        question:'Stock 6.000 unit, pemakaian 3.000 unit/bulan, PO baru 15.000 unit datang dalam 15 hari (0,5 bulan). Risiko utamanya adalah…',
+        options:['Kehabisan stock sebelum PO datang.','Overstock signifikan setelah PO datang, karena stock saat ini masih cukup untuk 2 bulan.','Tidak ada risiko.','Harga akan turun drastis.'],
+        correct:1,
+        explanation:'Stock 6.000 unit cukup untuk 2 bulan (jauh lebih lama dari 0,5 bulan lead time), sehingga tambahan 15.000 unit berisiko menyebabkan overstock besar.'
+      }
+    }
+  ]
+};
+
+/* Data Detective Mode — kasus investigasi bertahap (PRD §17 & §35). Tambah
+   kasus baru cukup dengan menambah object baru ke array DETECTIVE_CASES
+   dan mengganti DETECTIVE_CASE_INDEX (atau membuat pemilihan kasus di UI). */
+var DETECTIVE_CASES = [
+  {
+    id:'case-sales-sept',
+    title:'Kasus: Penjualan September Turun 18%',
+    intro:'Perusahaan mencatat penjualan bulan September turun 18% dibanding Agustus. Anda diminta menginvestigasi penyebabnya secara bertahap — data akan terbuka satu per satu sesuai jawaban Anda.',
+    steps:[
+      {
+        title:'Investigasi 1 — Region',
+        data:'Region     Agustus     September   Perubahan\nJawa       Rp420jt     Rp410jt     -2%\nSumatra    Rp180jt     Rp95jt      -47%\nKalimantan Rp90jt      Rp88jt      -2%\nSulawesi   Rp60jt      Rp58jt      -3%',
+        question:'Region mana yang mengalami penurunan terbesar?',
+        options:['Jawa','Sumatra','Kalimantan','Sulawesi'],
+        correct:1,
+        explanation:'Sumatra turun 47% — jauh lebih besar dari region lain yang relatif stabil (-2% s/d -3%). Investigasi difokuskan ke Sumatra.'
+      },
+      {
+        title:'Investigasi 2 — Produk',
+        data:'Produk (Region Sumatra)   Agustus    September   Perubahan\nProduk X                  Rp90jt     Rp20jt      -78%\nProduk Y                  Rp50jt     Rp45jt      -10%\nProduk Z                  Rp40jt     Rp30jt      -25%',
+        question:'Produk apa di region Sumatra yang memberikan kontribusi penurunan terbesar?',
+        options:['Produk X','Produk Y','Produk Z','Ketiganya sama'],
+        correct:0,
+        explanation:'Produk X turun 78% (dari Rp90jt ke Rp20jt) — kontributor terbesar terhadap penurunan region Sumatra.'
+      },
+      {
+        title:'Investigasi 3 — Customer Segment',
+        data:'Segment (Produk X, Sumatra)   Agustus    September\nRetail                        Rp30jt     Rp25jt\nDistributor                   Rp60jt     Rp(-5)... hilang total',
+        question:'Berdasarkan pola di atas, segment mana yang tampaknya berhenti bertransaksi sama sekali pada Produk X?',
+        options:['Retail','Distributor','Keduanya turun rata','Tidak bisa disimpulkan'],
+        correct:1,
+        explanation:'Segment Distributor terlihat hilang total transaksinya pada Produk X, sementara Retail hanya turun sedikit (wajar).'
+      },
+      {
+        title:'Investigasi 4 — Root Cause',
+        data:'Catatan tambahan tim sales: "Distributor utama Produk X di Sumatra dilaporkan mengalami keterlambatan pengiriman stock sejak akhir Agustus."',
+        question:'Berdasarkan seluruh temuan (Sumatra → Produk X → Distributor hilang → keterlambatan stock), root cause paling mungkin adalah…',
+        options:['Selera pasar Sumatra berubah total.','Distributor Produk X di Sumatra tidak bisa memasok karena masalah ketersediaan stock.','Harga Produk X naik drastis.','Tidak ada penyebab yang bisa disimpulkan.'],
+        correct:1,
+        explanation:'Rangkaian bukti (region → produk → segment → catatan operasional) konsisten mengarah pada masalah ketersediaan stock ke distributor, bukan perubahan permintaan pasar.'
+      },
+      {
+        title:'Investigasi 5 — Rekomendasi',
+        question:'Rekomendasi paling tepat untuk disampaikan ke manajemen adalah…',
+        options:['Turunkan target penjualan Sumatra secara permanen.','Percepat pemulihan pasokan ke distributor Sumatra & pantau pemulihan penjualan Produk X di segment Distributor.','Hentikan penjualan Produk X di seluruh Indonesia.','Tidak perlu tindakan apa pun.'],
+        correct:1,
+        explanation:'Karena akar masalah bersifat operasional (pasokan), solusinya juga operasional: percepat pasokan ke distributor dan pantau apakah penjualan pulih setelahnya.'
+      }
+    ]
+  }
+];
+
+/* Mini Project — checklist (PRD §18). Tambah/kurangi item cukup edit array ini. */
+var MINI_PROJECT = {
+  title:'Sales Analysis — 10.000 transaksi, 5 region, 50 produk, 2 tahun',
+  brief:'Anggap Anda menerima dataset penjualan mentah dan diminta menghasilkan dashboard + insight untuk manajemen. Checklist di bawah membantu Anda memastikan tidak ada langkah penting yang terlewat. Progres tersimpan otomatis di browser ini.',
+  tasks:[
+    'Clean data (format tanggal, duplikat, missing value).',
+    'Identifikasi anomali (nilai di luar rentang wajar).',
+    'Hitung KPI utama (total revenue, jumlah transaksi, AOV).',
+    'Analisis tren penjualan per bulan/minggu.',
+    'Identifikasi top 5 produk terlaris.',
+    'Identifikasi produk yang penjualannya menurun.',
+    'Susun dashboard ringkas (tabel/chart per region & produk).',
+    'Tulis 2-3 insight & rekomendasi bisnis berbasis temuan di atas.'
+  ]
+};
+
+/* ---------------------------- STORAGE ---------------------------- */
+var STORAGE_KEY = 'practice_progress_v1';
+
+function loadProgress(){
+  try{
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  }catch(e){}
+  return { completedModules:{}, detective:{}, project:{} };
+}
+function saveProgress(p){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }catch(e){}
+}
+var progress = loadProgress();
+
+function xpTotal(){
+  var xp = 0;
+  Object.keys(progress.completedModules||{}).forEach(function(k){ if (progress.completedModules[k]) xp += 10; });
+  var detCase = DETECTIVE_CASES[0];
+  if (progress.detective && progress.detective[detCase.id] && progress.detective[detCase.id].done) xp += 30;
+  if (progress.project && progress.project.done) xp += 40;
+  return xp;
+}
+function levelOfXp(xp){
+  if (xp >= 120) return 'Gold';
+  if (xp >= 50) return 'Silver';
+  return 'Bronze';
+}
+
+function skillFullyDone(skillId){
+  var mods = PRACTICE_MODULES[skillId] || [];
+  return mods.length > 0 && mods.every(function(m){ return !!(progress.completedModules||{})[m.id]; });
+}
+
+function renderTopSummary(){
+  var xp = xpTotal();
+  document.getElementById('xpScore').textContent = xp + ' XP';
+  document.getElementById('levelPill').textContent = levelOfXp(xp);
+
+  var badges = [];
+  Object.keys(SKILL_META).forEach(function(sk){
+    var meta = SKILL_META[sk];
+    if (meta.badge) badges.push({ name: meta.badge, earned: skillFullyDone(sk) });
+  });
+  var detCase = DETECTIVE_CASES[0];
+  badges.push({ name:'Data Detective', earned: !!(progress.detective && progress.detective[detCase.id] && progress.detective[detCase.id].done) });
+  badges.push({ name:'Dashboard Builder', earned: !!(progress.project && progress.project.done) });
+
+  document.getElementById('badgeRow').innerHTML = badges.map(function(b){
+    return '<span class="badgechip'+(b.earned?' earned':'')+'"><span class="material-symbols-outlined icon-sm'+(b.earned?' filled':'')+'" style="vertical-align:-3px;">star</span> '+b.name+'</span>';
+  }).join('');
+
+  var totalModules = 0, doneModules = 0;
+  Object.keys(PRACTICE_MODULES).forEach(function(sk){
+    PRACTICE_MODULES[sk].forEach(function(m){
+      totalModules++;
+      if ((progress.completedModules||{})[m.id]) doneModules++;
+    });
+  });
+  document.getElementById('progressNote').textContent = doneModules + ' dari ' + totalModules + ' modul selesai. XP tidak menghakimi — dipakai untuk mendorong latihan berkelanjutan.';
+}
+
+/* ---------------------------- SKILL ACCORDION ---------------------------- */
+var letters = ['A','B','C','D'];
+
+function buildModuleHtml(skillId, mod){
+  var done = !!(progress.completedModules||{})[mod.id];
+  var wrap = document.createElement('div');
+  wrap.className = 'module-block' + (done ? ' done' : '');
+  wrap.id = 'mod-' + mod.id;
+
+  var head = document.createElement('div');
+  head.className = 'module-title';
+  head.innerHTML = '<span>'+mod.title+'</span><span class="status-tag'+(done?' done':'')+'">'+(done?'<span class="material-symbols-outlined icon-sm filled" style="vertical-align:-3px;">check_circle</span> Selesai':'Belum selesai')+'</span>';
+  wrap.appendChild(head);
+
+  var tip = document.createElement('div');
+  tip.className = 'tip-text';
+  tip.textContent = mod.tip;
+  wrap.appendChild(tip);
+
+  var ch = mod.challenge;
+  var qBox = document.createElement('div');
+  qBox.className = 'challenge-q';
+  qBox.textContent = 'Mini Challenge: ' + ch.question;
+  wrap.appendChild(qBox);
+
+  var optWrap = document.createElement('div');
+  ch.options.forEach(function(optText, i){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'option-btn';
+    btn.innerHTML = '<span class="opt-letter">'+letters[i]+'</span>'+optText;
+    btn.addEventListener('click', function(){
+      var allBtns = optWrap.querySelectorAll('.option-btn');
+      allBtns.forEach(function(b){ b.disabled = true; });
+      var isCorrect = (i === ch.correct);
+      btn.classList.add(isCorrect ? 'correct' : 'wrong');
+      if (!isCorrect) allBtns[ch.correct].classList.add('correct');
+
+      var fb = document.createElement('div');
+      fb.className = 'feedback-box ' + (isCorrect ? 'ok' : 'no');
+      fb.textContent = (isCorrect ? 'Tepat. ' : 'Belum tepat. ') + ch.explanation;
+      wrap.appendChild(fb);
+
+      if (isCorrect){
+        progress.completedModules = progress.completedModules || {};
+        progress.completedModules[mod.id] = true;
+        saveProgress(progress);
+        head.innerHTML = '<span>'+mod.title+'</span><span class="status-tag done"><span class="material-symbols-outlined icon-sm filled" style="vertical-align:-3px;">check_circle</span> Selesai</span>';
+        wrap.classList.add('done');
+        renderTopSummary();
+      } else {
+        var retryBtn = document.createElement('button');
+        retryBtn.className = 'btn ghost small';
+        retryBtn.style.marginTop = '8px';
+        retryBtn.textContent = 'Coba Lagi';
+        retryBtn.addEventListener('click', function(){
+          renderSkillAccordion();
+          setTimeout(function(){ document.getElementById('mod-'+mod.id).scrollIntoView({block:'center'}); }, 0);
+        });
+        wrap.appendChild(retryBtn);
+      }
+    });
+    optWrap.appendChild(btn);
+  });
+  wrap.appendChild(optWrap);
+
+  return wrap;
+}
+
+var openSkillId = null;
+
+function renderSkillAccordion(){
+  var wrapEl = document.getElementById('skillAccordionWrap');
+  wrapEl.innerHTML = '';
+  Object.keys(SKILL_META).forEach(function(skillId){
+    var meta = SKILL_META[skillId];
+    var mods = PRACTICE_MODULES[skillId] || [];
+    var doneCount = mods.filter(function(m){ return !!(progress.completedModules||{})[m.id]; }).length;
+
+    var item = document.createElement('div');
+    item.className = 'accordion-item' + (openSkillId === skillId ? ' open' : '');
+    item.id = 'skill-' + skillId;
+
+    var head = document.createElement('div');
+    head.className = 'accordion-head';
+    head.innerHTML =
+      '<div class="left"><span class="material-symbols-outlined icon-lg" style="color:var(--sky);">'+meta.icon+'</span><div><h3>'+meta.name+'</h3>'+
+      '<div class="meta">'+doneCount+'/'+mods.length+' modul selesai'+(meta.badge?' · badge: '+meta.badge:'')+'</div></div></div>'+
+      '<span class="material-symbols-outlined chev">chevron_right</span>';
+    head.addEventListener('click', function(){
+      openSkillId = (openSkillId === skillId) ? null : skillId;
+      renderSkillAccordion();
+      if (openSkillId === skillId){
+        setTimeout(function(){ item.scrollIntoView({block:'start'}); }, 0);
+      }
+    });
+    item.appendChild(head);
+
+    var body = document.createElement('div');
+    body.className = 'accordion-body';
+    mods.forEach(function(m){ body.appendChild(buildModuleHtml(skillId, m)); });
+    item.appendChild(body);
+
+    wrapEl.appendChild(item);
+  });
+}
+
+/* ---------------------------- DATA DETECTIVE MODE ---------------------------- */
+var detectiveState = { stepIndex:0 };
+
+function renderDetective(){
+  var box = document.getElementById('detectiveCard');
+  var kase = DETECTIVE_CASES[0];
+  var saved = (progress.detective && progress.detective[kase.id]) || { done:false, stepIndex:0 };
+
+  box.innerHTML = '';
+  var titleEl = document.createElement('h3');
+  titleEl.textContent = kase.title;
+  box.appendChild(titleEl);
+
+  var introEl = document.createElement('p');
+  introEl.textContent = kase.intro;
+  box.appendChild(introEl);
+
+  if (saved.done){
+    var doneMsg = document.createElement('div');
+    doneMsg.className = 'feedback-box ok';
+    doneMsg.textContent = 'Kasus ini sudah kamu selesaikan. Badge "Data Detective" sudah diperoleh.';
+    box.appendChild(doneMsg);
+    var retry = document.createElement('button');
+    retry.className = 'btn ghost small';
+    retry.style.marginTop = '10px';
+    retry.textContent = 'Ulangi Kasus';
+    retry.addEventListener('click', function(){
+      progress.detective[kase.id] = { done:false, stepIndex:0 };
+      saveProgress(progress);
+      renderDetective();
+    });
+    box.appendChild(retry);
+    return;
+  }
+
+  var idx = Math.min(saved.stepIndex||0, kase.steps.length-1);
+  var step = kase.steps[idx];
+
+  var track = document.createElement('div');
+  track.className = 'step-track';
+  track.textContent = 'Tahap ' + (idx+1) + ' / ' + kase.steps.length + ' — ' + step.title;
+  box.appendChild(track);
+
+  if (step.data){
+    var pre = document.createElement('div');
+    pre.className = 'qdata';
+    pre.textContent = step.data;
+    box.appendChild(pre);
+  }
+
+  var qEl = document.createElement('div');
+  qEl.className = 'challenge-q';
+  qEl.textContent = step.question;
+  box.appendChild(qEl);
+
+  var optWrap = document.createElement('div');
+  step.options.forEach(function(optText, i){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'option-btn';
+    btn.innerHTML = '<span class="opt-letter">'+letters[i]+'</span>'+optText;
+    btn.addEventListener('click', function(){
+      var allBtns = optWrap.querySelectorAll('.option-btn');
+      allBtns.forEach(function(b){ b.disabled = true; });
+      var isCorrect = (i === step.correct);
+      btn.classList.add(isCorrect ? 'correct' : 'wrong');
+      if (!isCorrect) allBtns[step.correct].classList.add('correct');
+
+      var fb = document.createElement('div');
+      fb.className = 'feedback-box ' + (isCorrect ? 'ok' : 'no');
+      fb.textContent = step.explanation;
+      box.appendChild(fb);
+
+      var nextBtn = document.createElement('button');
+      nextBtn.className = 'btn small';
+      nextBtn.style.marginTop = '10px';
+      var isLast = idx === kase.steps.length-1;
+      nextBtn.textContent = isLast ? 'Selesaikan Kasus ✓' : 'Lanjut ke Tahap Berikutnya →';
+      nextBtn.addEventListener('click', function(){
+        progress.detective = progress.detective || {};
+        if (isLast){
+          progress.detective[kase.id] = { done:true, stepIndex:kase.steps.length };
+        } else {
+          progress.detective[kase.id] = { done:false, stepIndex: idx+1 };
+        }
+        saveProgress(progress);
+        renderDetective();
+        renderTopSummary();
+        if (isLast) box.scrollIntoView({block:'start'});
+      });
+      box.appendChild(nextBtn);
+    });
+    optWrap.appendChild(btn);
+  });
+  box.appendChild(optWrap);
+}
+
+/* ---------------------------- MINI PROJECT CHECKLIST ---------------------------- */
+function renderProject(){
+  var box = document.getElementById('projectCard');
+  box.innerHTML = '';
+  var t = document.createElement('h3');
+  t.textContent = MINI_PROJECT.title;
+  box.appendChild(t);
+  var b = document.createElement('p');
+  b.textContent = MINI_PROJECT.brief;
+  box.appendChild(b);
+
+  var checked = (progress.project && progress.project.checked) || {};
+  var list = document.createElement('div');
+  list.className = 'checklist';
+  MINI_PROJECT.tasks.forEach(function(taskText, i){
+    var lbl = document.createElement('label');
+    var cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.checked = !!checked[i];
+    cb.addEventListener('change', function(){
+      progress.project = progress.project || { checked:{} };
+      progress.project.checked = progress.project.checked || {};
+      progress.project.checked[i] = cb.checked;
+      var allChecked = MINI_PROJECT.tasks.every(function(_, j){ return !!progress.project.checked[j]; });
+      progress.project.done = allChecked;
+      saveProgress(progress);
+      renderTopSummary();
+      renderProject();
+    });
+    lbl.appendChild(cb);
+    var span = document.createElement('span');
+    span.textContent = taskText;
+    lbl.appendChild(span);
+    list.appendChild(lbl);
+  });
+  box.appendChild(list);
+
+  if (progress.project && progress.project.done){
+    var doneMsg = document.createElement('div');
+    doneMsg.className = 'feedback-box ok';
+    doneMsg.style.marginTop = '10px';
+    doneMsg.textContent = 'Semua langkah selesai — badge "Dashboard Builder" diperoleh!';
+    box.appendChild(doneMsg);
+  }
+}
+
+/* ---------------------------- INIT + DEEP LINK ---------------------------- */
+function init(){
+  renderTopSummary();
+  var params = new URLSearchParams(window.location.search);
+  var skillParam = params.get('skill');
+  if (skillParam && SKILL_META[skillParam]) openSkillId = skillParam;
+  renderSkillAccordion();
+  renderDetective();
+  renderProject();
+
+  if (skillParam && SKILL_META[skillParam]){
+    setTimeout(function(){
+      var el = document.getElementById('skill-'+skillParam);
+      if (el) el.scrollIntoView({block:'start'});
+    }, 50);
+  }
+}
+init();
+</script>
+</body>
+</html>
