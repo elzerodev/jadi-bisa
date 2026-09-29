@@ -669,7 +669,7 @@ function renderResult(result, target){
     var topGapSkill = gaps[0].k;
     var deepLink = document.createElement('a');
     deepLink.className = 'btn';
-    deepLink.href = 'practice.html&skill=' + topGapSkill;
+    deepLink.href = 'practice.html?skill=' + encodeURIComponent(topGapSkill);
     deepLink.innerHTML = '<span class="material-symbols-outlined pill-icon">play_arrow</span> Latihan ' + SKILLS[topGapSkill];
     ctaRow.appendChild(deepLink);
   }
