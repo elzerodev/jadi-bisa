@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<base target="_top">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Are You A Leader? | LeaderCheck</title>
+<script>
+(function(){try{var s=localStorage.getItem('ela_theme');var t=(s==='light'||s==='dark')?s:((window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080b09;--panel:#101512;--panel-2:#161d19;--panel-3:#1c2420;--line:#26312b;--text:#e9efe9;--dim:#8ba396;--dim2:#5e7268;--accent:#b58cff;--ok:#4ade80;--warn:#ffb400;--bad:#ff6b5c;--btn:#12081f;--mono:'JetBrains Mono',ui-monospace,monospace;--sans:'Manrope',-apple-system,sans-serif;--r:14px}
+:root[data-theme="light"]{--bg:#f4f1f8;--panel:#fff;--panel-2:#f0ecf6;--panel-3:#e5dff0;--line:#d9d0e6;--text:#1a1524;--dim:#544a66;--dim2:#7d7392;--accent:#7a45d6;--ok:#1f8a4c;--warn:#b26b00;--bad:#c9392a;--btn:#fff}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:radial-gradient(ellipse 900px 500px at 15% -10%,rgba(181,140,255,.09),transparent 60%),var(--bg);background-attachment:fixed;color:var(--text);font-family:var(--sans);min-height:100vh;line-height:1.55;overflow-x:hidden}
+#app{max-width:860px;margin:0 auto;padding:22px 18px 40px}
+h1,h2,h3{font-family:var(--mono);letter-spacing:-.01em;margin:0 0 8px}
+.dim{color:var(--dim)}.mono{font-family:var(--mono)}
+#topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.brand{font-family:var(--mono);font-weight:700;font-size:13px;color:var(--accent);text-decoration:none}
+.tsw{position:relative;display:inline-flex;cursor:pointer}.tsw input{position:absolute;opacity:0}
+.trk{width:46px;height:25px;background:var(--panel-3);border:1px solid var(--line);border-radius:20px;position:relative}
+.thm{position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;background:var(--panel);border:1px solid var(--line);font-size:11px;display:flex;align-items:center;justify-content:center;transition:.2s}
+.thm:before{content:"🌙"}.tsw input:checked+.trk .thm{transform:translateX(21px)}.tsw input:checked+.trk .thm:before{content:"☀️"}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.card{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r);padding:24px;margin-bottom:16px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;color:var(--accent);border:1px solid var(--accent);padding:4px 12px;border-radius:20px;margin-bottom:14px}
+.lead{color:var(--dim);max-width:640px}
+label.f{display:block;font-family:var(--mono);font-size:12px;color:var(--dim);margin:14px 0 6px}
+input[type=text]{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:11px 13px;font:inherit}
+.btn{font-family:var(--mono);font-weight:700;font-size:13px;background:var(--accent);color:var(--btn);border:0;border-radius:10px;padding:12px 20px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.note{font-size:12.5px;color:var(--dim2);margin-top:14px}
+.prog{height:6px;background:var(--panel-3);border-radius:6px;overflow:hidden;margin:6px 0 20px}.prog i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.dtag{font-family:var(--mono);font-size:11px;color:var(--accent)}
+.q{font-size:18px;font-weight:600;margin:8px 0 20px}
+.opts{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.opt{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:12px 4px;cursor:pointer;text-align:center;font-family:var(--mono)}
+.opt b{display:block;font-size:18px}.opt span{font-size:10px;color:var(--dim)}
+.opt:hover,.opt.sel{border-color:var(--accent);background:var(--panel-3)}
+.big{font-family:var(--mono);font-size:54px;font-weight:800;color:var(--accent);line-height:1}
+.lvl{font-family:var(--mono);font-size:20px;font-weight:700;margin:6px 0}
+.bar{margin:12px 0}.bar .h{display:flex;justify-content:space-between;font-size:13px}.bar .t{height:10px;background:var(--panel-3);border-radius:10px;overflow:hidden;margin-top:5px}.bar .t i{display:block;height:100%;border-radius:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+ul{margin:6px 0 0;padding-left:20px}li{margin:4px 0;font-size:14px}
+.chk{font-size:13px;padding:6px 0;border-bottom:1px dashed var(--line)}.chk:last-child{border:0}
+.hide{display:none}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}.opts{grid-template-columns:repeat(5,1fr);gap:5px}.opt span{display:none}.big{font-size:44px}}
+@media print{#topbar,.row,.noprint{display:none!important}body{background:#fff;color:#000}.card{border-color:#ccc}}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="topbar">
+  <a class="brand" href="<?= scriptUrl ?>">← DIKILABS · LEARNING HUB</a>
+  <label class="tsw noprint" title="Mode gelap/terang"><input type="checkbox" id="tt"><span class="trk"><span class="thm"></span></span></label>
+</div>
+
+<!-- INTRO -->
+<section id="s-intro">
+  <div class="card">
+    <span class="badge">LEADERCHECK · 30 PERTANYAAN</span>
+    <h1>Are You A Leader?</h1>
+    <p class="lead">Ukur potensi, kesiapan, dan level kepemimpinanmu berdasarkan perilaku nyata 3–6 bulan terakhir. Jawab sesuai kebiasaan sehari-hari, bukan jawaban yang dianggap ideal.</p>
+    <label class="f" for="nm">Nama</label><input type="text" id="nm" maxlength="60" placeholder="Nama kamu">
+    <label class="f" for="ps">Posisi saat ini (opsional)</label><input type="text" id="ps" maxlength="60" placeholder="mis. Staff Data Analyst">
+    <div class="row"><button class="btn" id="go">Mulai Assessment</button></div>
+    <p class="note">Assessment ini alat bantu pengembangan, bukan diagnosis psikologis dan bukan satu-satunya dasar keputusan promosi, rekrutmen, atau penempatan jabatan.</p>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="s-quiz" class="hide">
+  <div class="card">
+    <div class="mono dim" style="font-size:12px" id="pl"></div>
+    <div class="prog"><i id="pb"></i></div>
+    <div class="dtag" id="qd"></div>
+    <div class="q" id="qt"></div>
+    <div class="opts" id="ops"></div>
+    <div class="row"><button class="btn ghost" id="bk">← Kembali</button></div>
+    <p class="note">1 = Hampir tidak pernah · 2 = Jarang · 3 = Kadang-kadang · 4 = Sering · 5 = Hampir selalu</p>
+  </div>
+</section>
+
+<!-- RESULT -->
+<section id="s-res" class="hide">
+  <div class="card">
+    <span class="badge">LEADERSHIP ASSESSMENT REPORT</span>
+    <div id="who" class="dim mono" style="font-size:12px"></div>
+    <div class="grid2" style="margin-top:12px">
+      <div><div class="big" id="tot">0</div><div class="dim mono" style="font-size:12px">SKOR TOTAL / 100</div></div>
+      <div><div class="lvl" id="lv"></div><div class="dim" id="lvd" style="font-size:14px"></div></div>
+    </div>
+    <div id="cap" class="note"></div>
+  </div>
+  <div class="card"><h3>Skor Kompetensi</h3><div id="bars"></div></div>
+  <div class="grid2">
+    <div class="card"><h3>Kelebihan Utama</h3><div id="str"></div></div>
+    <div class="card"><h3>Area Pengembangan</h3><div id="gap"></div></div>
+  </div>
+  <div class="card"><h3>Rekomendasi & Risiko Perilaku</h3><div id="rec"></div></div>
+  <div class="card"><h3>Individual Development Plan 30 · 60 · 90 Hari</h3><div id="idp"></div></div>
+  <div class="card"><h3>Validasi Lanjutan</h3>
+    <div class="chk">☐ Bukti perilaku nyata (hasil kerja, dokumentasi keputusan)</div>
+    <div class="chk">☐ Masukan atasan</div><div class="chk">☐ Masukan rekan kerja</div>
+    <div class="chk">☐ Simulasi kasus / wawancara berbasis perilaku</div>
+    <p class="note">Skor adalah penilaian diri dan dapat dipengaruhi persepsi atau kecenderungan menjawab yang “ideal”. Skor tinggi tidak otomatis membuktikan kepemimpinan efektif; skor rendah tidak berarti tidak berpotensi. Ambang batas masih prototipe dan perlu diuji sebelum dipakai untuk keputusan SDM formal.</p>
+    <p class="note" style="font-style:italic">“Assessment bukan untuk memberi label permanen, melainkan untuk memahami kemampuan saat ini dan menentukan langkah pengembangan berikutnya.”</p>
+    <div class="row noprint"><button class="btn" onclick="window.print()">Cetak / Simpan PDF</button><button class="btn ghost" id="rs">Ulangi Assessment</button></div>
+  </div>
+</section>
+</div>
+
+<script>
+var DIMS=[
+ {n:'Ownership & Accountability',w:.20},
+ {n:'Decision Making & Problem Solving',w:.20},
+ {n:'Communication & Collaboration',w:.15},
+ {n:'People Leadership & Coaching',w:.20},
+ {n:'Integrity & Emotional Regulation',w:.15},
+ {n:'Strategic & Business Thinking',w:.10}
+];
+var Q=[
+[0,'Ketika menemukan masalah di luar tugas utama, saya berinisiatif membantu mencari solusi.'],
+[0,'Saya menyelesaikan tugas sesuai komitmen dan memberi kabar lebih awal bila ada risiko terlambat.'],
+[0,'Saya mengakui kesalahan sendiri tanpa lebih dulu menyalahkan orang lain atau keadaan.'],
+[0,'Saya dapat bekerja tanpa harus terus-menerus diingatkan atasan.'],
+[0,'Saya bersedia bertanggung jawab atas hasil kerja, termasuk saat hasilnya tidak sesuai harapan.'],
+[1,'Saya mengumpulkan fakta yang relevan sebelum mengambil keputusan penting.'],
+[1,'Saya mampu menentukan prioritas ketika beberapa pekerjaan penting harus selesai bersamaan.'],
+[1,'Saya mempertimbangkan dampak keputusan terhadap pelanggan, tim, biaya, dan kualitas.'],
+[1,'Saya berani mengambil keputusan dalam batas kewenangan tanpa menunggu semuanya sempurna.'],
+[1,'Saya mengevaluasi penyebab masalah agar solusinya tidak hanya mengatasi gejala sementara.'],
+[2,'Saya mendengarkan pendapat yang berbeda sebelum menyampaikan keputusan atau kesimpulan.'],
+[2,'Saya dapat menyampaikan instruksi dan ekspektasi kerja dengan jelas.'],
+[2,'Saya mampu berbeda pendapat dengan tetap menghormati orang lain.'],
+[2,'Saya menyelesaikan perbedaan pendapat lewat diskusi, bukan gosip atau serangan pribadi.'],
+[2,'Saya memastikan orang yang terlibat paham tanggung jawab, tenggat, dan hasil yang diharapkan.'],
+[3,'Saya membantu rekan memahami masalahnya tanpa selalu mengambil alih pekerjaannya.'],
+[3,'Saya membagi tugas berdasarkan kemampuan, beban kerja, dan kebutuhan pengembangan anggota tim.'],
+[3,'Saya memberi masukan yang spesifik dan membangun ketika seseorang melakukan kesalahan.'],
+[3,'Saya menghargai kontribusi orang lain dan tidak mengambil kredit atas pekerjaan anggota tim.'],
+[3,'Saya mampu menegur perilaku atau kinerja bermasalah secara adil, meski orangnya dekat dengan saya.'],
+[4,'Saya tetap menyampaikan fakta sebenarnya meski dapat merugikan citra saya.'],
+[4,'Saya dapat mengendalikan respons saat menerima kritik, tekanan, atau kabar tidak menyenangkan.'],
+[4,'Saya menerapkan standar dan aturan kerja secara konsisten tanpa pilih kasih.'],
+[4,'Saya menjaga informasi rahasia dan tidak memakainya untuk merugikan rekan kerja.'],
+[4,'Saat emosi meningkat, saya menunda respons yang berpotensi memperburuk situasi dan mencari solusi.'],
+[5,'Saya memahami bagaimana pekerjaan saya berkontribusi pada target tim atau organisasi.'],
+[5,'Saya mempertimbangkan dampak jangka panjang, bukan hanya penyelesaian pekerjaan hari ini.'],
+[5,'Saya mengenali peluang memperbaiki proses, menghemat sumber daya, atau meningkatkan kualitas.'],
+[5,'Saya menyesuaikan prioritas ketika kondisi bisnis, kebutuhan pelanggan, atau risiko berubah.'],
+[5,'Saya mempertimbangkan kebutuhan pengembangan orang lain saat merencanakan pekerjaan dan target tim.']
+];
+var LBL=['Hampir tidak pernah','Jarang','Kadang-kadang','Sering','Hampir selalu'];
+
+/* Level: dicek dari tertinggi; ambil level tertinggi yang seluruh syaratnya terpenuhi.
+   req = {indexDimensi: minimum}; 'all' = semua dimensi minimum. */
+var LEVELS=[
+ {n:'Strategic Leadership Potential',min:93,req:{0:75,1:75,2:75,3:75,4:75,5:85},d:'Penilaian diri sangat tinggi pada kompetensi kepemimpinan dan strategis. Wajib divalidasi dengan pengalaman, observasi, dan evaluasi kompetensi.'},
+ {n:'Managerial Potential',min:85,req:{5:70,3:75,4:70},d:'Perilaku mendukung pengelolaan fungsi kerja dan koordinasi beberapa tim; perlu validasi pengalaman dan rekam jejak.'},
+ {n:'Supervisor Potential',min:75,req:{3:65,1:65,4:65},d:'Perilaku mendukung pengelolaan kinerja operasional, pemecahan masalah, dan pengembangan anggota tim.'},
+ {n:'Team Leader Potential',min:65,req:{0:60,2:50,4:60},d:'Kesiapan awal untuk mengoordinasikan pekerjaan dan tim kecil, dengan syarat kompetensi kritis terpenuhi.'},
+ {n:'Emerging Leader',min:50,req:{},d:'Indikasi potensi untuk menerima tanggung jawab koordinasi secara bertahap.'},
+ {n:'Staff — Berkembang',min:35,req:{},d:'Mulai menunjukkan perilaku positif, tetapi belum konsisten dalam inisiatif, komunikasi, atau pengelolaan tanggung jawab.'},
+ {n:'Staff — Fondasi',min:0,req:{},d:'Fokus pengembangan pada penguasaan pekerjaan, kemandirian, tanggung jawab, dan penyelesaian masalah dasar.'}
+];
+
+/* Rekomendasi per dimensi: [rendah <60, sedang 60-74, tinggi >=75] -> {risk, act[]} */
+var ADV=[
+ [{r:'Cenderung menunggu instruksi, kurang proaktif, komitmen belum konsisten.',a:['Buat daftar tugas harian dengan target & tenggat','Biasakan lapor progres','Evaluasi kesalahan dan tindakan korektif']},
+  {r:'Tanggung jawab kuat saat diawasi; kemandirian perlu dikonsistenkan.',a:['Jadi PIC pekerjaan sederhana','Tetapkan indikator hasil terukur','Minta feedback konsistensi kerja']},
+  {r:'Penilaian diri tinggi; perlu bukti nyata.',a:['Pimpin proyek kecil','Jadi mentor rekan kerja','Validasi lewat hasil kerja & penilaian pihak lain']}],
+ [{r:'Keputusan tanpa analisis memadai, sulit prioritas, mengatasi gejala saja.',a:['Pakai analisis akar masalah (5 Why)','Bandingkan beberapa alternatif solusi','Latih keputusan dalam batas kewenangan']},
+  {r:'Mampu masalah rutin; keputusan kompleks masih butuh dukungan.',a:['Tangani kasus dengan kompleksitas bertahap','Dokumentasikan keputusan','Evaluasi hasil keputusan setelah implementasi']},
+  {r:'Percaya diri menganalisis; kualitas keputusan perlu dibuktikan.',a:['Ambil proyek lintas fungsi','Susun evaluasi risiko & skenario alternatif','Validasi lewat hasil nyata']}],
+ [{r:'Instruksi kurang jelas, kurang mendengar, menghindari konflik.',a:['Latih pesan ringkas','Ulang kesepakatan setelah diskusi','Latih komunikasi asertif & minta feedback kejelasan']},
+  {r:'Kolaborasi baik, tetapi goyah saat konflik atau tekanan.',a:['Pimpin rapat singkat','Tulis pembagian tanggung jawab','Evaluasi komunikasi setelah proyek']},
+  {r:'Kemampuan komunikasi kuat berdasarkan penilaian diri.',a:['Fasilitasi diskusi tim','Jadi penghubung antarbagian','Bantu selesaikan perbedaan pendapat']}],
+ [{r:'Berisiko mengambil alih pekerjaan orang lain, sulit delegasi dan memberi feedback.',a:['Latih delegasi dengan hasil & tenggat jelas','Feedback berbasis perilaku, bukan pribadi','Ukur keberhasilan dari hasil tim']},
+  {r:'Mulai mampu membantu; delegasi dan pengembangan anggota perlu latihan.',a:['Pimpin pekerjaan tim kecil','Sesi feedback mingguan','Identifikasi kebutuhan belajar anggota']},
+  {r:'Menilai diri mampu mengembangkan orang lain.',a:['Dampingi anggota di proyek','Jadi mentor','Bangun sistem pembagian kerja & evaluasi kinerja']}],
+ [{r:'Respons emosional kurang terkendali, aturan kurang konsisten, sulit menerima kritik.',a:['Evaluasi respons pada situasi sulit','Pisahkan fakta, asumsi, dan emosi','Cari feedback cara menangani konflik']},
+  {r:'Dasar perilaku positif; konsistensi di bawah tekanan perlu diperkuat.',a:['Latih percakapan sulit','Dokumentasikan keputusan penting','Minta evaluasi setelah menangani konflik']},
+  {r:'Integritas & kontrol diri tinggi menurut penilaian diri.',a:['Validasi lewat contoh tindakan nyata','Ambil tanggung jawab yang butuh transparansi','Jaga standar adil di tim']}],
+ [{r:'Terpaku pada pekerjaan harian, kurang melihat dampak bisnis & jangka panjang.',a:['Pelajari indikator bisnis relevan','Hubungkan tugas dengan target organisasi','Buat analisis manfaat-biaya']},
+  {r:'Paham target operasional; perencanaan jangka panjang perlu latihan.',a:['Susun rencana kerja bulanan','Buat analisis risiko','Usulkan perbaikan proses berbasis data']},
+  {r:'Menilai diri mampu melihat dampak lebih luas.',a:['Terlibat perencanaan lintas fungsi','Susun business case sederhana','Pertimbangkan efisiensi, risiko, keberlanjutan']}]
+];
+
+var ans=[],cur=0,prof={};
+function $(i){return document.getElementById(i)}
+function show(id){['s-intro','s-quiz','s-res'].forEach(function(s){$(s).classList.toggle('hide',s!==id)});window.scrollTo(0,0)}
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function band(v){return v<60?0:(v<75?1:2)}
+function col(v){return v<50?'var(--bad)':(v<75?'var(--warn)':'var(--ok)')}
+
+function render(){
+  var q=Q[cur];
+  $('pl').textContent='Pertanyaan '+(cur+1)+' dari '+Q.length;
+  $('pb').style.width=((cur)/Q.length*100)+'%';
+  $('qd').textContent='DIMENSI '+String.fromCharCode(65+q[0])+' · '+DIMS[q[0]].n.toUpperCase();
+  $('qt').textContent=q[1];
+  var h='';
+  for(var v=1;v<=5;v++){h+='<button class="opt'+(ans[cur]===v?' sel':'')+'" data-v="'+v+'"><b>'+v+'</b><span>'+LBL[v-1]+'</span></button>'}
+  $('ops').innerHTML=h;
+  $('bk').disabled=cur===0;
+}
+$('ops').addEventListener('click',function(e){
+  var b=e.target.closest('.opt');if(!b)return;
+  ans[cur]=+b.getAttribute('data-v');
+  if(cur<Q.length-1){cur++;render()}else{finish()}
+});
+$('bk').onclick=function(){if(cur>0){cur--;render()}};
+$('go').onclick=function(){
+  prof.nama=$('nm').value.trim();prof.posisi=$('ps').value.trim();
+  if(!prof.nama){$('nm').focus();$('nm').style.borderColor='var(--bad)';return}
+  ans=[];cur=0;show('s-quiz');render();
+};
+$('rs').onclick=function(){show('s-intro')};
+
+function compute(){
+  var sum=[0,0,0,0,0,0];
+  Q.forEach(function(q,i){sum[q[0]]+=ans[i]});
+  var sc=sum.map(function(s){return Math.round((((s/5)-1)/4)*1000)/10});
+  var tot=0;DIMS.forEach(function(d,i){tot+=sc[i]*d.w});
+  tot=Math.round(tot*100)/100;
+  var lvl=LEVELS[LEVELS.length-1],blocked=null;
+  for(var i=0;i<LEVELS.length;i++){
+    var L=LEVELS[i];if(tot<L.min)continue;
+    var miss=[];for(var k in L.req){if(sc[k]<L.req[k])miss.push(DIMS[k].n+' ≥ '+L.req[k])}
+    if(!miss.length){lvl=L;break}
+    if(!blocked)blocked={n:L.n,miss:miss};
+  }
+  return {sc:sc,tot:tot,lvl:lvl,blocked:blocked};
+}
+
+function finish(){
+  var r=compute();
+  $('pb').style.width='100%';
+  $('who').textContent=prof.nama+(prof.posisi?' · '+prof.posisi:'')+' · '+new Date().toLocaleDateString('id-ID');
+  $('tot').textContent=r.tot.toFixed(1).replace('.0','');
+  $('lv').textContent=r.lvl.n;$('lv').style.color='var(--accent)';
+  $('lvd').textContent=r.lvl.d;
+  $('cap').innerHTML=r.blocked?'Skor totalmu masuk rentang <b>'+esc(r.blocked.n)+'</b>, tetapi syarat kompetensi kritis belum terpenuhi ('+esc(r.blocked.miss.join('; '))+'), sehingga level yang ditampilkan adalah level tertinggi yang seluruh syaratnya terpenuhi.':'';
+  var bars='';
+  r.sc.forEach(function(v,i){bars+='<div class="bar"><div class="h"><span>'+esc(DIMS[i].n)+' <span class="dim">('+DIMS[i].w*100+'%)</span></span><b class="mono">'+v.toFixed(1).replace('.0','')+'</b></div><div class="t"><i style="width:'+v+'%;background:'+col(v)+'"></i></div></div>'});
+  $('bars').innerHTML=bars;
+  var idx=r.sc.map(function(v,i){return i}).sort(function(a,b){return r.sc[b]-r.sc[a]});
+  var top=idx.slice(0,3),low=idx.slice().reverse().slice(0,3);
+  function li(list,strong){return list.map(function(i){var b=ADV[i][band(r.sc[i])];return '<div class="chk"><b>'+esc(DIMS[i].n)+'</b> <span class="mono dim">'+r.sc[i]+'</span><br><span class="dim" style="font-size:13px">'+esc(strong?'Dapat dimanfaatkan: '+b.a[0].toLowerCase():b.r)+'</span></div>'}).join('')}
+  $('str').innerHTML=li(top,true);$('gap').innerHTML=li(low,false);
+  $('rec').innerHTML=low.map(function(i){var b=ADV[i][band(r.sc[i])];return '<div style="margin-bottom:12px"><b>'+esc(DIMS[i].n)+'</b><ul>'+b.a.map(function(a){return '<li>'+esc(a)+'</li>'}).join('')+'</ul></div>'}).join('');
+  var a=DIMS[low[0]].n,b2=DIMS[low[1]].n;
+  $('idp').innerHTML=
+   '<div class="chk"><b>Hari 1–30 · Pemahaman & kebiasaan dasar</b><br><span class="dim">Fokus pada <b>'+esc(a)+'</b> dan <b>'+esc(b2)+'</b>: pilih dua perilaku yang diperbaiki, tetapkan target mingguan, minta feedback atasan/rekan, catat hambatan & kemajuan. Indikator: rencana tertulis, target spesifik, evaluasi mingguan selesai.</span></div>'+
+   '<div class="chk"><b>Hari 31–60 · Praktik & penerapan</b><br><span class="dim">Pimpin proyek kecil, latih delegasi, tangani satu masalah operasional, praktikkan komunikasi asertif, evaluasi bersama atasan. Indikator: target & tenggat jelas, tanggung jawab terbagi, hambatan dilaporkan dini, ada bukti perubahan perilaku.</span></div>'+
+   '<div class="chk"><b>Hari 61–90 · Evaluasi & konsistensi</b><br><span class="dim">Ulangi assessment, bandingkan dengan hasil awal, minta feedback pihak lain, tinjau pencapaian, susun rencana berikutnya. Indikator: perilaku target berubah, hasil kerja terukur, kebutuhan pengembangan lanjutan jelas.</span></div>';
+  show('s-res');
+  try{google.script.run.withFailureHandler(function(){}).saveLeaderCheckResult({nama:prof.nama,posisi:prof.posisi,overallScore:r.tot,level:r.lvl.n,dimScores:JSON.stringify(r.sc)})}catch(e){}
+}
+
+(function(){var i=$('tt');i.checked=document.documentElement.getAttribute('data-theme')==='light';i.onchange=function(){var t=i.checked?'light':'dark';document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('ela_theme',t)}catch(e){}}})();
+</script>
+</body>
+</html>
