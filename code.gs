@@ -45,7 +45,8 @@ var PAGE_FILES = {
   soal: 'soal',
   skillcheck: 'skillcheck',
   practice: 'practice',
-  commstyle: 'commstyle'
+  commstyle: 'commstyle',
+  leader: 'leader'
 };
 
 function doGet(e) {
@@ -66,7 +67,8 @@ var titles = {
   soal: 'Excel Skill Test & Practice — Excel Logic Academy',
   skillcheck: 'Skill Assessment — Kenali Skill & Skill Gap Kamu | SkillCheck',
   practice: 'Skill Practice — Latihan Excel, SQL & Data Skills | SkillCheck',
-  commstyle: 'Communication Style Assessment — Kenali Gaya Komunikasimu | SkillCheck'
+  commstyle: 'Communication Style Assessment — Kenali Gaya Komunikasimu | SkillCheck',
+  leader: 'Are You a Leader? — Kenali Gaya Kepemimpinanmu | SkillCheck'
 };
 
   return template.evaluate()
